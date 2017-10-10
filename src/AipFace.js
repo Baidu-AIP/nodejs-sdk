@@ -64,7 +64,7 @@ class AipFace extends BaseClient {
         let apiUrl = param.targetPath;
         delete param.targetPath;
 
-        let requestInfo = new RequestInfo(PATH_FACE_DETECT,
+        let requestInfo = new RequestInfo(apiUrl,
             scope, param, METHOD_POST);
         if (this.preRequest(requestInfo)) {
             httpClient.postWithInfo(requestInfo).on(HttpClient.EVENT_DATA, function (data) {
@@ -181,5 +181,6 @@ class AipFace extends BaseClient {
         return promise;
     }
 }
+
 
 module.exports = AipFace;
