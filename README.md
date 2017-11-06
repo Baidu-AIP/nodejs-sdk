@@ -13,6 +13,7 @@
         ├── AipNlp.js                              //语言处理基础技术交互类
         ├── AipImageCensor.js                      //图像审核交互类
         ├── AipImageClassify.js                    //图像识别交互类
+        ├── AipImageSearch.js                      //图像搜索交互类
         ├── AipKg.js                               //知识图谱交互类
         ├── AipSpeech.js                           //语音合成&语音识别交互类
         ├── index.js                               //入口文件
