@@ -26,7 +26,7 @@ const EventPromise = require('./util/eventPromise');
 
 const METHOD_POST = 'POST';
 
-const PATH_FACE_DETECT = '/rest/2.0/face/v1/detect';
+const PATH_FACE_DETECT = '/rest/2.0/face/v2/detect';
 const PATH_FACE_MATCH = '/rest/2.0/face/v2/match';
 
 const PATH_FACEFIND_ADD = '/rest/2.0/face/v2/faceset/user/add';
