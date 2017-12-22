@@ -35,6 +35,12 @@ let mergeTool = {
     },
     isArray: function (obj) {
         return '[object Array]' === Object.prototype.toString.call(obj);
+    },
+    isObject: function (obj) {
+        return '[object Object]' === Object.prototype.toString.call(obj);
+    },
+    isFunction: function (obj) {
+        return '[object Function]' === Object.prototype.toString.call(obj);
     }
 };
 

@@ -18,13 +18,6 @@ const DevAuth = require('../auth/devAuth');
 
 const DevAuthToken = require('../auth/devAuthToken');
 
-const EventEmitter = require('events');
-
-const HttpClientNlp = require('../http/httpClientNlp');
-
-const EventPromise = require('../util/eventPromise');
-
-const Task = require('./task');
 
 /**
  * 无授权判断状态
@@ -32,15 +25,7 @@ const Task = require('./task');
  * @const
  * @type {number}
  */
-const AUTHTYPE_INIT = -1;
-
-/**
- * 无法确定调用类型
- *
- * @const
- * @type {number}
- */
-const AUTHTYPE_UNKNOW = 0;
+const AUTHTYPE_INIT = 0;
 
 /**
  * 确定为云用户
@@ -51,7 +36,7 @@ const AUTHTYPE_UNKNOW = 0;
 const AUTHTYPE_BCE = 1;
 
 /**
- * 确定为开发者用户（手动输入token模式）
+ * 确定为开发者用户（手动输入token模式,以及token中包含了正确的scope）
  *
  * @const
  * @type {number}
@@ -66,13 +51,6 @@ const AUTHTYPE_DEV = 2;
  */
 const AUTHTYPE_DEV_OR_BCE = 3;
 
-/**
- * 获取开发者token失败用户
- *
- * @const
- * @type {number}
- */
-const AUTHTYPE_BCE_MAYBE = 4;
 
 /**
  * 初始状态
@@ -106,41 +84,9 @@ const STATUS_READY = 2;
  */
 const STATUS_ERROR = -1;
 
-/**
- * 云ak长度
- *
- * @const
- * @type {number}
- */
-const AK_LENGTH_BCE = 32;
-
-/**
- * 云sk长度
- *
- * @const
- * @type {number}
- */
-const SK_LENGTH_BCE = 32;
-
-/**
- * 开发者ak长度
- *
- * @const
- * @type {number}
- */
-const AK_LENGTH_DEV = 24;
-
-/**
- * 开发者sk长度
- *
- * @const
- * @type {number}
- */
-const SK_LENGTH_DEV = 32;
-
  /**
  * BaseClient类
- * 个具体接口类基类，处理鉴权逻辑等
+ * 各具体接口类基类，处理鉴权逻辑等
  *
  * @constructor
  * @param {string} appid appid.
@@ -149,131 +95,105 @@ const SK_LENGTH_DEV = 32;
  */
 class BaseClient {
     constructor(appId, ak, sk) {
-        this.appId = appId;
+        this.appId = 0;
         this.ak = ak;
         this.sk = sk;
+
         this.authType = AUTHTYPE_INIT;
         this.status = STATUS_INIT;
-        this.devAuth = null;
-        this.taskList = [];
-        this.taskEvent = Task.EVENT_DATA;
 
-        this.errorCause = null;
+        this.pms;
 
         this.devAccessToken = null;
 
-        this.init();
+        this.devAuth = new DevAuth(this.ak, this.sk);
+
+        this.authTypeReq();
     }
-    validateKeys() {
-        let akLen = this.ak.length;
-        let skLen = this.sk.length;
-        return ((akLen === AK_LENGTH_BCE && skLen === SK_LENGTH_BCE)
-            || (akLen === AK_LENGTH_DEV && skLen === SK_LENGTH_DEV));
-    }
-    setToken(token, expireTime) {
+    setAccessToken(token, expireTime) {
         let et = expireTime || DevAuthToken.DEFAULT_EXPIRE_DURATION;
-        this.devAccessToken = new DevAuthToken(token, et, '');
+        this.devAccessToken = new DevAuthToken(token, et, null);
         this.authType = AUTHTYPE_DEV;
-    }
-    init() {
-        this.judgeAuthType();
-    }
-    judgeAuthType() {
-        this.authType = this.getAuthTypeByAkLen();
-        if (this.authType === AUTHTYPE_UNKNOW) {
-            this.authTypeReq();
-        } else {
-            this.status = STATUS_READY;
-        }
-    }
-    getAuthTypeByAkLen() {
-        return AUTHTYPE_UNKNOW;
+        this.status = STATUS_READY;
     }
     authTypeReq() {
-        if (this.devAuth === null) {
-            this.devAuth = new DevAuth(this.ak, this.sk);
-            this.devAuth.on(DevAuth.EVENT_GETTOKEN_SUCCESS, this.gotDevAuth.bind(this));
-            this.devAuth.on(DevAuth.EVENT_GETTOKEN_ERROR, this.gotDevAuthFail.bind(this));
-        }
+        // 请求access_token服务
         this.status = STATUS_AUTHTYPE_REQESTING;
-        this.devAuth.getToken();
+
+        return this.pms = this.devAuth.getToken().then(this.gotDevAuthSuccess.bind(this),
+        this.gotDevAuthFail.bind(this));
     }
-    gotDevAuth(token) {
+    gotDevAuthSuccess(token) {
+        // 如果用户没有手动调用setAccessToken设置access_token
         if (this.authType !== AUTHTYPE_DEV) {
             this.devAccessToken = token;
             this.authType = AUTHTYPE_DEV_OR_BCE;
         }
         this.status = STATUS_READY;
-        this.resolveTasks();
+        return;
     }
     gotDevAuthFail(err) {
         // 获取token时鉴权服务器返回失败信息
         if (err.errorType === DevAuth.EVENT_ERRTYPE_NORMAL) {
             // 可能是百度云的ak，sk
-            this.authType = AUTHTYPE_BCE_MAYBE;
+            this.authType = AUTHTYPE_BCE;
             this.status = STATUS_READY;
-            this.resolveTasks();
+            return;
         }
 
         // 获取token时发生了网络错误
-        if (err.errorType === DevAuth.EVENT_ERRTYPE_NETWORK) {
+        // 或者是发生了服务器返回数据格式异常
+        if (err.errorType === DevAuth.EVENT_ERRTYPE_NETWORK
+            || err.errorType === DevAuth.EVENT_ERRTYPE_ILLEGAL_RESPONSE) {
             this.status = STATUS_ERROR;
-            this.errorCause = err.error;
-            this.rejectTasks();
+            throw err;
         }
     }
-    registTask(fn, param) {
-        let promise = new EventPromise();
+    doRequest(requestInfo, httpClient) {
+        return this.pms.then(function() {
+            let pms = this.preRequest(requestInfo);
 
-        // 获取token时发生了网络错误
-        if (this.status === STATUS_ERROR) {
-            promise.resolve(this.errorCause);
-            return promise;
-        }
-
-        // 获取token成功
-        if (this.status === STATUS_READY) {
-            return fn.bind(this)(param);
-        }
-
-        this.taskList.push(new Task(fn, param, promise, this));
-        return promise;
-    }
-    resolveTasks() {
-        while (this.taskList.length > 0) {
-            let task = this.taskList.shift();
-            task.setDevAuthOK();
-        }
-    }
-    rejectTasks() {
-        while (this.taskList.length > 0) {
-            let task = this.taskList.shift();
-            task.setDevAuthFail(this.errorCause);
-        }
+            if (typeof pms == "undefined") {
+                // 鉴权方式确定，请求接口
+                return httpClient.postWithInfo(requestInfo)
+            } else {
+                // 如果返回对象是promise，说明是需要重新获取access_token
+                // 待重新获取完后继续请求接口
+                return pms.then(function() {
+                    this.preRequest(requestInfo);
+                    return httpClient.postWithInfo(requestInfo);
+                }.bind(this))
+            }
+        }.bind(this))
     }
     preRequest(requestInfo) {
-        if (this.authType === AUTHTYPE_BCE
-            || this.authType === AUTHTYPE_BCE_MAYBE) {
-            // 使用云方式调用
-            requestInfo.makeBceOptions(this.ak, this.sk);
-            return true;
+        // 如果前一次获取access_token服务发生错误，重新获取
+        if (this.status == STATUS_ERROR) {
+            return this.authTypeReq();
         }
+
+        // 获取access_token失败，使用云方式调用
+        if (this.authType === AUTHTYPE_BCE) {
+            requestInfo.makeBceOptions(this.ak, this.sk);
+            return;
+        }
+
+        // 获取access_token成功，或者调用setAccessToken设置的access_token
         if (this.authType === AUTHTYPE_DEV_OR_BCE || this.authType === AUTHTYPE_DEV) {
+            // 拥有AI平台接口权限
             if (this.devAccessToken.hasScope(requestInfo.scope) || this.authType === AUTHTYPE_DEV) {
-                // 使用开发者方式调用
+                // 判断access_token是否过期
                 if (!this.devAccessToken.isExpired()) {
                     requestInfo.makeDevOptions(this.devAccessToken);
-                    return true;
+                    return;
                 }
-                this.authTypeReq();
-                return false;
+                // access_token过期重新获取
+                return this.authTypeReq();
             } else {
                 // 使用云方式访问调用
                 requestInfo.makeBceOptions(this.ak, this.sk);
-                return true;
             }
         }
-
     }
  }
 

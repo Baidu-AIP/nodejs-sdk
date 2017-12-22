@@ -16,13 +16,20 @@
  */
 const devScope = require('../const/devScope');
 
+/**
+ * 提前获取access_token的时间 默认24个小时
+ *
+ * @type {number}
+ */
+let DEFAULT_FETCH_AHEAD_DURATION = 24 * 60 * 60 * 1000;
+
  /**
  * devAuthToken类
  * 百度开发者token信息包装类
  *
  * @constructor
  * @param {string} token access_token
- * @param {number} expireTime 过期时间
+ * @param {number} expireTime 多久之后过期
  * @param {string} scope 权限
  */
 class DevAuthToken {
@@ -35,6 +42,11 @@ class DevAuthToken {
         this.initScope();
     }
     initScope() {
+        // 用户自建token，默认为有权限
+        if (this.scope == null) {
+            this.hasScopeFlag = true;
+            return;
+        }
         let scopeArray = this.scope.split(' ');
         scopeArray.forEach(function (item) {
             if (item === devScope) {
@@ -43,18 +55,25 @@ class DevAuthToken {
         }.bind(this));
     }
     hasScope(scope) {
-        // scope 暂时不判断具体接口
         return this.hasScopeFlag;
     }
     isExpired() {
         let now = new Date();
-
-        // 过期时间前10个小时重新获取token
-        if (now.getTime(this.expireTime) - this.authDate.getTime() > this.expireTime * 1000 - 36000000) {
+        // 根据服务器返回的access_token过期时间，提前重新获取token
+        if (now.getTime(this.expireTime) -
+            this.authDate.getTime() > this.expireTime * 1000 -
+                DEFAULT_FETCH_AHEAD_DURATION) {
             return true;
         }
         return false;
     }
+}
+
+/**
+ * 设置提前获取access_token的时间
+ */
+DevAuthToken.setExpireAhead = function (duration) {
+    DEFAULT_FETCH_AHEAD_DURATION = duration;
 }
 
 DevAuthToken.DEFAULT_EXPIRE_DURATION = 2592000 * 1000;

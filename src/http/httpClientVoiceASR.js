@@ -16,17 +16,15 @@
  */
 
 const HttpClient = require('./httpClient');
-const code = require('../const/code');
-const HttpHeader = require('../const/httpHeader');
-const CONTENT_TYPE_JSON = 'application/json';
 const crypto = require('crypto');
 
 /**
  * HttpClientVoice类
- * 百度语音接口调用封装， 参考文档：http://speech.baidu.com/docs/asr/57
+ * 百度语音接口调用封装
+ * 参考文档：http://speech.baidu.com/docs/asr/57
  *
  * @class
- * @extends HttpClientExt
+ * @extends HttpClient
  * @constructor
  */
 class HttpClientVoiceASR extends HttpClient {
@@ -51,8 +49,7 @@ class HttpClientVoiceASR extends HttpClient {
             body: body
         };
 
-        this.req(options);
-        return this;
+        return this.req(options);
     }
     createBody(param) {
         let body = JSON.stringify(param);
@@ -65,7 +62,5 @@ class HttpClientVoiceASR extends HttpClient {
         return str;
     }
 }
-
-HttpClientVoiceASR.EVENT_DATA = HttpClient.EVENT_DATA;
 
 module.exports = HttpClientVoiceASR;

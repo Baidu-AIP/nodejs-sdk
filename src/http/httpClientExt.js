@@ -25,7 +25,7 @@ const CONTENT_TYPE_JSON = 'application/json';
  * 图像审核某个接口调用需要json的Content-type,请求body为json字符串
  *
  * @class
- * @extends HttpClientExt
+ * @extends HttpClient
  * @constructor
  */
 class HttpClientExt extends HttpClient {
@@ -42,8 +42,7 @@ class HttpClientExt extends HttpClient {
             timeout: HttpClient.DEFAULT_TIMEOUT,
             body: body
         };
-        this.req(options);
-        return this;
+        return this.req(options);
     }
     createBody(param) {
         let body = JSON.stringify(param);
@@ -51,6 +50,5 @@ class HttpClientExt extends HttpClient {
     }
 }
 
-HttpClientExt.EVENT_DATA = HttpClient.EVENT_DATA;
 
 module.exports = HttpClientExt;

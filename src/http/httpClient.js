@@ -15,7 +15,7 @@
  * @author baiduAip
  */
 const request = require('request');
-const EventEmitter = require('events');
+const objectTools = require('../util/objectTools');
 
 /**
  * HttpClient类
@@ -23,28 +23,11 @@ const EventEmitter = require('events');
  * @see https://github.com/request/request
  *
  * @class
- * @extends EventEmitter
  * @constructor
  */
-class HttpClient extends EventEmitter {
+class HttpClient {
     constructor() {
-        super();
-    }
-    bindErrorEvent(promise) {
-        this.on(HttpClient.EVENT_ERROR, function (errInfo) {
-            promise.reject(errInfo);
-        });
-    }
-    onResp(error, response, body) {
-        if (error === null) {
-            try {
-                this.emit(HttpClient.EVENT_DATA, JSON.parse(body));
-            } catch (e) {
-                this.emit(HttpClient.EVENT_DATA, body);
-            }
-        } else {
-            this.emit(HttpClient.EVENT_ERROR, error);
-        }
+
     }
     postWithInfo(requestInfo) {
         let options = {
@@ -55,17 +38,59 @@ class HttpClient extends EventEmitter {
             timeout: HttpClient.DEFAULT_TIMEOUT
         };
 
-        this.req(options);
-        return this;
+        return this.req(options);
     }
     req(options) {
-        request(options, this.onResp.bind(this));
-        return this;
+        // 首先处理设置INTERCEPTOR的情况
+        if (objectTools.isFunction(HttpClient.REQUEST_INTERCEPTOR)) {
+            options = HttpClient.REQUEST_INTERCEPTOR(options);
+        // 其次设置全局request options的
+        } else if (objectTools.isObject(HttpClient.REQUEST_GLOBAL_OPTIONS)) {
+            options = objectTools.merge(HttpClient.REQUEST_GLOBAL_OPTIONS, options);
+        }
+
+        return new Promise(function(resolve, reject) {
+            request(options, function(error, response, body) {
+                if (error === null) {
+                    try {
+                        resolve(JSON.parse(body));
+                    } catch (e) {
+                        // 无法解析json请求，就返回原始body
+                        resolve(body);
+                    }
+                } else {
+                    reject(error);
+                }
+            });
+        });
     }
 }
 
-HttpClient.DEFAULT_TIMEOUT = 10000;
+/**
+ * 用来设置request库的参数，会覆盖所有options，设置时请确保你知道它的作用
+ * @see https://github.com/request/request#requestoptions-callback
+ * @see https://github.com/request/request
+ */
+HttpClient.setRequestOptions = function (options) {
+    HttpClient.REQUEST_GLOBAL_OPTIONS = options;
+}
 
-HttpClient.EVENT_DATA = 'data';
+
+/**
+ * 用来获取和设置request库的参数，会覆盖所有options，设置时请确保你知道它的作用
+ * 优先级高于setRequestOptions
+ *
+ * @see https://github.com/request/request#requestoptions-callback
+ * @see https://github.com/request/request
+ */
+HttpClient.setRequestInterceptor = function (interceptorCallback) {
+    HttpClient.REQUEST_INTERCEPTOR = interceptorCallback;
+}
+
+HttpClient.REQUEST_GLOBAL_OPTIONS = null;
+
+HttpClient.REQUEST_INTERCEPTOR = null;
+
+HttpClient.DEFAULT_TIMEOUT = 10000;
 
 module.exports = HttpClient;

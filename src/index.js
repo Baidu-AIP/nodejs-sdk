@@ -24,5 +24,6 @@ module.exports = {
     ocr: require('./AipOcr'),
     nlp: require('./AipNlp'),
     kg: require('./AipKg'),
-    speech: require('./AipSpeech')
+    speech: require('./AipSpeech'),
+    HttpClient: require('./http/httpClient')
 };

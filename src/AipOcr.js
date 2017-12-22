@@ -11,47 +11,39 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  *
- * @file AipOcr
- * @author baiduAip
+ * @file AipOcr.js
+ * @author baidu aip
  */
+
 const BaseClient = require('./client/baseClient');
 
 const RequestInfo = require('./client/requestInfo');
 
-const HttpClient = require('./http/httpClient');
+const HttpClient = require('./http/HttpClient');
 
 const objectTools = require('./util/objectTools');
 
-const EventPromise = require('./util/eventPromise');
-
 const METHOD_POST = 'POST';
 
-const PATH_OCR_BANKCARD = '/rest/2.0/ocr/v1/bankcard';
-const PATH_OCR_IDCARD = '/rest/2.0/ocr/v1/idcard';
-const PATH_OCR_GENERAL = '/rest/2.0/ocr/v1/general';
-const PATH_OCR_ACCURATE = '/rest/2.0/ocr/v1/accurate';
-const PATH_OCR_ACCURATE_BASIC = '/rest/2.0/ocr/v1/accurate_basic';
-const PATH_OCR_GENERAL_BASIC = '/rest/2.0/ocr/v1/general_basic';
-const PATH_OCR_GENERAL_ENHANCE = '/rest/2.0/ocr/v1/general_enhanced';
-const PATH_OCR_WEBIMAGE = '/rest/2.0/ocr/v1/webimage';
-const PATH_OCR_DRIVINGLICENSE = '/rest/2.0/ocr/v1/driving_license';
-const PATH_OCR_VEHICLELICENSE = '/rest/2.0/ocr/v1/vehicle_license';
-const PATH_OCR_TABLE_REQUEST = '/rest/2.0/solution/v1/form_ocr/request';
-const PATH_OCR_TABLE_GETRESULT = '/rest/2.0/solution/v1/form_ocr/get_request_result';
-const PATH_OCR_LICENSEPLATE = '/rest/2.0/ocr/v1/license_plate';
-const PATH_OCR_RECEIPT = '/rest/2.0/ocr/v1/receipt';
-const PATH_OCR_BUSINESSLICENSE = '/rest/2.0/ocr/v1/business_license';
+const GENERAL_BASIC_PATH = '/rest/2.0/ocr/v1/general_basic';
+const ACCURATE_BASIC_PATH = '/rest/2.0/ocr/v1/accurate_basic';
+const GENERAL_PATH = '/rest/2.0/ocr/v1/general';
+const ACCURATE_PATH = '/rest/2.0/ocr/v1/accurate';
+const GENERAL_ENHANCED_PATH = '/rest/2.0/ocr/v1/general_enhanced';
+const WEB_IMAGE_PATH = '/rest/2.0/ocr/v1/webimage';
+const IDCARD_PATH = '/rest/2.0/ocr/v1/idcard';
+const BANKCARD_PATH = '/rest/2.0/ocr/v1/bankcard';
+const DRIVING_LICENSE_PATH = '/rest/2.0/ocr/v1/driving_license';
+const VEHICLE_LICENSE_PATH = '/rest/2.0/ocr/v1/vehicle_license';
+const LICENSE_PLATE_PATH = '/rest/2.0/ocr/v1/license_plate';
+const BUSINESS_LICENSE_PATH = '/rest/2.0/ocr/v1/business_license';
+const RECEIPT_PATH = '/rest/2.0/ocr/v1/receipt';
+const TABLE_RECOGNIZE_PATH = '/rest/2.0/solution/v1/form_ocr/request';
+const TABLE_RESULT_GET_PATH = '/rest/2.0/solution/v1/form_ocr/get_request_result';
 
-const ID_CARD_SIDE_FRONT = 'front';
-const ID_CARD_SIDE_BACK = 'back';
-
-const CYCLEINTERVAL = 1000;
-const DEFAULTTIMEOUT = 10000;
-
-const scope = require('./const/devScope').DEFAULT;
 
 /**
- * AipOcr类，构造调用文字识别对象
+ * AipOcr类
  *
  * @class
  * @extends BaseClient
@@ -65,189 +57,398 @@ class AipOcr extends BaseClient {
         super(appId, ak, sk);
     }
     commonImpl(param) {
-        let promise = new EventPromise();
         let httpClient = new HttpClient();
         let apiUrl = param.targetPath;
         delete param.targetPath;
         let requestInfo = new RequestInfo(apiUrl,
-            scope, param, METHOD_POST);
+            param, METHOD_POST);
+        return this.doRequest(requestInfo, httpClient);
+    }
 
-        if (this.preRequest(requestInfo)) {
-            httpClient.postWithInfo(requestInfo).on(HttpClient.EVENT_DATA, function (data) {
-                promise.resolve(data);
-            }.bind(this)).bindErrorEvent(promise);
-        } else {
-            return this.registTask(this.commonImpl, param);
-        }
-        return promise;
-    }
-    bankcard(image) {
-        let param = {
-            image: image,
-            targetPath: PATH_OCR_BANKCARD
-        };
-        let promise = this.registTask(this.commonImpl, param);
-        return promise;
-    }
-    idcard(image, isFront, options) {
-        let side = isFront ? ID_CARD_SIDE_FRONT : ID_CARD_SIDE_BACK;
-        let param = {
-            image: image,
-            id_card_side: side,
-            targetPath: PATH_OCR_IDCARD
-        };
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
-    }
-    generalUrl(url, options) {
-        let param = {url: url, targetPath: PATH_OCR_GENERAL};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
-    }
-    general(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_GENERAL};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
-    }
-    accurate(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_ACCURATE};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
-    }
-    generalBasicUrl(url, options) {
-        let param = {url: url, targetPath: PATH_OCR_GENERAL_BASIC};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
-    }
+    /**
+     * 通用文字识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   language_type 识别语言类型，默认为CHN_ENG。可选值包括：<br>- CHN_ENG：中英文混合；<br>- ENG：英文；<br>- POR：葡萄牙语；<br>- FRE：法语；<br>- GER：德语；<br>- ITA：意大利语；<br>- SPA：西班牙语；<br>- RUS：俄语；<br>- JAP：日语；<br>- KOR：韩语；
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   detect_language 是否检测语言，默认不检测。当前支持（中文、英语、日语、韩语）
+     *   probability 是否返回识别结果中每一行的置信度
+     * @return {Promise} - 标准Promise对象
+     */
     generalBasic(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_GENERAL_BASIC};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+        let param = {
+            image: image,
+            targetPath: GENERAL_BASIC_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
+
+    /**
+     * 通用文字识别接口
+     *
+     * @param {string} url - 图片完整URL，URL长度不超过1024字节，URL对应的图片base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式，当image字段存在时url字段失效
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   language_type 识别语言类型，默认为CHN_ENG。可选值包括：<br>- CHN_ENG：中英文混合；<br>- ENG：英文；<br>- POR：葡萄牙语；<br>- FRE：法语；<br>- GER：德语；<br>- ITA：意大利语；<br>- SPA：西班牙语；<br>- RUS：俄语；<br>- JAP：日语；<br>- KOR：韩语；
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   detect_language 是否检测语言，默认不检测。当前支持（中文、英语、日语、韩语）
+     *   probability 是否返回识别结果中每一行的置信度
+     * @return {Promise} - 标准Promise对象
+     */
+    generalBasicUrl(url, options) {
+        let param = {
+            url: url,
+            targetPath: GENERAL_BASIC_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 通用文字识别（高精度版）接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   probability 是否返回识别结果中每一行的置信度
+     * @return {Promise} - 标准Promise对象
+     */
     accurateBasic(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_ACCURATE_BASIC};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+        let param = {
+            image: image,
+            targetPath: ACCURATE_BASIC_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
-    generalEnhanceUrl(url, options) {
-        let param = {url: url, targetPath: PATH_OCR_GENERAL_ENHANCE};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+
+    /**
+     * 通用文字识别（含位置信息版）接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   recognize_granularity 是否定位单字符位置，big：不定位单字符位置，默认值；small：定位单字符位置
+     *   language_type 识别语言类型，默认为CHN_ENG。可选值包括：<br>- CHN_ENG：中英文混合；<br>- ENG：英文；<br>- POR：葡萄牙语；<br>- FRE：法语；<br>- GER：德语；<br>- ITA：意大利语；<br>- SPA：西班牙语；<br>- RUS：俄语；<br>- JAP：日语；<br>- KOR：韩语；
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   detect_language 是否检测语言，默认不检测。当前支持（中文、英语、日语、韩语）
+     *   vertexes_location 是否返回文字外接多边形顶点位置，不支持单字位置。默认为false
+     *   probability 是否返回识别结果中每一行的置信度
+     * @return {Promise} - 标准Promise对象
+     */
+    general(image, options) {
+        let param = {
+            image: image,
+            targetPath: GENERAL_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
+
+    /**
+     * 通用文字识别（含位置信息版）接口
+     *
+     * @param {string} url - 图片完整URL，URL长度不超过1024字节，URL对应的图片base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式，当image字段存在时url字段失效
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   recognize_granularity 是否定位单字符位置，big：不定位单字符位置，默认值；small：定位单字符位置
+     *   language_type 识别语言类型，默认为CHN_ENG。可选值包括：<br>- CHN_ENG：中英文混合；<br>- ENG：英文；<br>- POR：葡萄牙语；<br>- FRE：法语；<br>- GER：德语；<br>- ITA：意大利语；<br>- SPA：西班牙语；<br>- RUS：俄语；<br>- JAP：日语；<br>- KOR：韩语；
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   detect_language 是否检测语言，默认不检测。当前支持（中文、英语、日语、韩语）
+     *   vertexes_location 是否返回文字外接多边形顶点位置，不支持单字位置。默认为false
+     *   probability 是否返回识别结果中每一行的置信度
+     * @return {Promise} - 标准Promise对象
+     */
+    generalUrl(url, options) {
+        let param = {
+            url: url,
+            targetPath: GENERAL_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 通用文字识别（含位置高精度版）接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   recognize_granularity 是否定位单字符位置，big：不定位单字符位置，默认值；small：定位单字符位置
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   vertexes_location 是否返回文字外接多边形顶点位置，不支持单字位置。默认为false
+     *   probability 是否返回识别结果中每一行的置信度
+     * @return {Promise} - 标准Promise对象
+     */
+    accurate(image, options) {
+        let param = {
+            image: image,
+            targetPath: ACCURATE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 通用文字识别（含生僻字版）接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   language_type 识别语言类型，默认为CHN_ENG。可选值包括：<br>- CHN_ENG：中英文混合；<br>- ENG：英文；<br>- POR：葡萄牙语；<br>- FRE：法语；<br>- GER：德语；<br>- ITA：意大利语；<br>- SPA：西班牙语；<br>- RUS：俄语；<br>- JAP：日语；<br>- KOR：韩语；
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   detect_language 是否检测语言，默认不检测。当前支持（中文、英语、日语、韩语）
+     *   probability 是否返回识别结果中每一行的置信度
+     * @return {Promise} - 标准Promise对象
+     */
     generalEnhance(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_GENERAL_ENHANCE};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+        let param = {
+            image: image,
+            targetPath: GENERAL_ENHANCED_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
-    webImageUrl(url, options) {
-        let param = {url: url, targetPath: PATH_OCR_WEBIMAGE};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+
+    /**
+     * 通用文字识别（含生僻字版）接口
+     *
+     * @param {string} url - 图片完整URL，URL长度不超过1024字节，URL对应的图片base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式，当image字段存在时url字段失效
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   language_type 识别语言类型，默认为CHN_ENG。可选值包括：<br>- CHN_ENG：中英文混合；<br>- ENG：英文；<br>- POR：葡萄牙语；<br>- FRE：法语；<br>- GER：德语；<br>- ITA：意大利语；<br>- SPA：西班牙语；<br>- RUS：俄语；<br>- JAP：日语；<br>- KOR：韩语；
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   detect_language 是否检测语言，默认不检测。当前支持（中文、英语、日语、韩语）
+     *   probability 是否返回识别结果中每一行的置信度
+     * @return {Promise} - 标准Promise对象
+     */
+    generalEnhanceUrl(url, options) {
+        let param = {
+            url: url,
+            targetPath: GENERAL_ENHANCED_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
+
+    /**
+     * 网络图片文字识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   detect_language 是否检测语言，默认不检测。当前支持（中文、英语、日语、韩语）
+     * @return {Promise} - 标准Promise对象
+     */
     webImage(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_WEBIMAGE};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+        let param = {
+            image: image,
+            targetPath: WEB_IMAGE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
+
+    /**
+     * 网络图片文字识别接口
+     *
+     * @param {string} url - 图片完整URL，URL长度不超过1024字节，URL对应的图片base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式，当image字段存在时url字段失效
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   detect_language 是否检测语言，默认不检测。当前支持（中文、英语、日语、韩语）
+     * @return {Promise} - 标准Promise对象
+     */
+    webImageUrl(url, options) {
+        let param = {
+            url: url,
+            targetPath: WEB_IMAGE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 身份证识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {string} idCardSide - front：身份证正面；back：身份证背面
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   detect_risk 是否开启身份证风险类型(身份证复印件、临时身份证、身份证翻拍、修改过的身份证)功能，默认不开启，即：false。可选值:true-开启；false-不开启
+     * @return {Promise} - 标准Promise对象
+     */
+    idcard(image, idCardSide, options) {
+        let param = {
+            image: image,
+            id_card_side: idCardSide,
+            targetPath: IDCARD_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 银行卡识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    bankcard(image, options) {
+        let param = {
+            image: image,
+            targetPath: BANKCARD_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 驾驶证识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     * @return {Promise} - 标准Promise对象
+     */
     drivingLicense(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_DRIVINGLICENSE};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+        let param = {
+            image: image,
+            targetPath: DRIVING_LICENSE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
-    licensePlate(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_LICENSEPLATE};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
-    }
+
+    /**
+     * 行驶证识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     *   accuracy normal 使用快速服务，1200ms左右时延；缺省或其它值使用高精度服务，1600ms左右时延
+     * @return {Promise} - 标准Promise对象
+     */
     vehicleLicense(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_VEHICLELICENSE};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+        let param = {
+            image: image,
+            targetPath: VEHICLE_LICENSE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
-    receipt(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_RECEIPT};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+
+    /**
+     * 车牌识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   multi_detect 是否检测多张车牌，默认为false，当置为true的时候可以对一张图片内的多张车牌进行识别
+     * @return {Promise} - 标准Promise对象
+     */
+    licensePlate(image, options) {
+        let param = {
+            image: image,
+            targetPath: LICENSE_PLATE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
+
+    /**
+     * 营业执照识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
     businessLicense(image, options) {
-        let param = {image: image, targetPath: PATH_OCR_BUSINESSLICENSE};
-        let promise = this.registTask(this.commonImpl, objectTools.merge(param, options));
-        return promise;
+        let param = {
+            image: image,
+            targetPath: BUSINESS_LICENSE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
+
+    /**
+     * 通用票据识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   recognize_granularity 是否定位单字符位置，big：不定位单字符位置，默认值；small：定位单字符位置
+     *   probability 是否返回识别结果中每一行的置信度
+     *   accuracy normal 使用快速服务，1200ms左右时延；缺省或其它值使用高精度服务，1600ms左右时延
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     * @return {Promise} - 标准Promise对象
+     */
+    receipt(image, options) {
+        let param = {
+            image: image,
+            targetPath: RECEIPT_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 表格文字识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
     tableBegin(image, options) {
         let param = {
-            image: image
+            image: image,
+            targetPath: TABLE_RECOGNIZE_PATH
         };
-        let promise = this.registTask(this.tableBeginImpl, objectTools.merge(param, options));
-        return promise;
+        return this.commonImpl(objectTools.merge(param, options));
     }
-    tableBeginImpl(param) {
-        let promise = new EventPromise();
-        let httpClient = new HttpClient();
-        let requestInfo = new RequestInfo(PATH_OCR_TABLE_REQUEST,
-            scope, param, METHOD_POST);
-        if (this.preRequest(requestInfo)) {
-            httpClient.postWithInfo(requestInfo).on(HttpClient.EVENT_DATA, function (data) {
-                promise.resolve(data);
-            }.bind(this)).bindErrorEvent(promise);
-        } else {
-            return this.registTask(this.tableBeginImpl, param);
-        }
-        return promise;
-    }
-    tableGetresult(id, type) {
-        let param = {
-            request_id: id,
-            result_type: type
-        };
 
-        let promise = this.registTask(this.tableGetresultImpl, param);
-        return promise;
+    /**
+     * 表格识别结果接口
+     *
+     * @param {string} requestId - 发送表格文字识别请求时返回的request id
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   result_type 期望获取结果的类型，取值为“excel”时返回xls文件的地址，取值为“json”时返回json格式的字符串,默认为”excel”
+     * @return {Promise} - 标准Promise对象
+     */
+    tableGetresult(requestId, options) {
+        let param = {
+            request_id: requestId,
+            targetPath: TABLE_RESULT_GET_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
-    tableGetresultImpl(param) {
-        let promise = new EventPromise();
-        let httpClient = new HttpClient();
-        let requestInfo = new RequestInfo(PATH_OCR_TABLE_GETRESULT,
-            scope, param, METHOD_POST);
-        if (this.preRequest(requestInfo)) {
-            httpClient.postWithInfo(requestInfo).on(HttpClient.EVENT_DATA, function (data) {
-                promise.resolve(data);
-            }.bind(this)).bindErrorEvent(promise);
-        } else {
-            return this.registTask(this.tableGetresultImpl, param);
-        }
-        return promise;
-    }
-    tableRecorgnize(image, type, timeout) {
-        let promise = new EventPromise();
-        timeout = timeout || DEFAULTTIMEOUT;
-        this.tableBegin(image).then(function (result) {
+    tableRecorgnize(image, type, timeout, interval) {
+        let self = this;
+        timeout = timeout || 20000;
+        interval = interval || 2000;
+        return this.tableBegin(image).then(function(result) {
             if (result.error_code) {
-                promise.resolve(result);
-                return;
+                return result;
             }
             let id = result.result[0]['request_id'];
-            promise.setValue('beginTime', Date.now());
-            let pid = setInterval(function () {
-                if (Date.now() - promise.getValue('beginTime') > timeout) {
-                    clearInterval(pid);
-                    promise.reject({errorMsg: 'get result timeout', requestId: id});
-                    return;
-                }
-                this.tableGetresult(id, type).then(function (result) {
-                    if (result['result']['ret_code'] === 3) {
+            let pid = null;
+            let startTime = Date.now();
+            return new Promise(function(resolve, reject) {
+                pid = setInterval(function () {
+                    if (Date.now() - startTime > timeout) {
+                        reject({errorMsg: 'get result timeout', requestId: id});
                         clearInterval(pid);
-                        promise.resolve(result);
+                    } else {
+                        self.tableGetresult(id, type).then(function (result) {
+                            if (result['result']['ret_code'] === 3) {
+                                clearInterval(pid);
+                                resolve(result);
+                            }
+                        });
                     }
-                }.bind(this), function (error) {
-                    promise.reject(error);
-                }.bind(this));
-            }.bind(this), CYCLEINTERVAL);
-        }.bind(this), function (error) {
-            promise.reject(error);
-        }.bind(this));
-        return promise;
+                }, interval);
+            })
+        });
     }
 }
 
 module.exports = AipOcr;
+
+

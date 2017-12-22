@@ -22,10 +22,6 @@ const HttpClientVoiceASR = require('./http/httpClientVoiceASR');
 
 const HttpClientVoiceTTS = require('./http/httpClientVoiceTTS');
 
-const objectTools = require('./util/objectTools');
-
-const EventPromise = require('./util/eventPromise');
-
 const code = require('./const/code');
 
 const httpHeader = require('./const/httpHeader');
@@ -38,8 +34,6 @@ const HOST_VOP = 'vop.baidu.com';
 const HOST_TSN = 'tsn.baidu.com';
 const PATH_VOP = '/server_api';
 const PATH_TTS = '/text2audio';
-
-const scope = require('./const/devScope').DEFAULT;
 
 /**
  * AipSpeech类，构造调用语音接口
@@ -55,19 +49,7 @@ class AipSpeech extends BaseClient {
     constructor(appId, ak, sk) {
         super(appId, ak, sk);
     }
-    preRequest(requestInfo) {
-        // 如果是云的ak，sk
-        if (this.devAccessToken === null) {
-            return true;
-        }
-        // 使用开发者方式调用
-        if (!this.devAccessToken.isExpired()) {
-            requestInfo.makeDevOptions(this.devAccessToken);
-            return true;
-        }
-        this.authTypeReq();
-        return false;
-    }
+
     recognize(buffer, format, rate, options) {
         let param = {
             speech: buffer.toString(code.BASE64),
@@ -77,28 +59,7 @@ class AipSpeech extends BaseClient {
             len: buffer.toString(code.BIN).length
         };
 
-        let promise = this.registTask(this.recognizeImpl, objectTools.merge(param, options));
-        return promise;
-    }
-    recognizeImpl(param) {
-        let promise = new EventPromise();
-        let httpClient = new HttpClientVoiceASR();
-
-        let requestInfo = new RequestInfo(PATH_VOP,
-            scope, param, METHOD_POST, false, {
-                [httpHeader.CONTENT_TYPE]: CONTENT_TYPE_JSON
-            });
-
-        requestInfo.setHost(HOST_VOP);
-
-        if (this.preRequest(requestInfo)) {
-            httpClient.postWithInfo(requestInfo).on(HttpClientVoiceASR.EVENT_DATA, function (data) {
-                promise.resolve(data);
-            }.bind(this)).bindErrorEvent(promise);
-        } else {
-            return this.registTask(this.recognizeImpl, param);
-        }
-        return promise;
+        return this.asrImpl(param);
     }
 
     recognizeByUrl(url, callback, format, rate, options) {
@@ -109,56 +70,35 @@ class AipSpeech extends BaseClient {
             channel: 1,
             callback: callback
         };
-
-        let promise = this.registTask(this.recognizeByUrlImpl, objectTools.merge(param, options));
-        return promise;
+        return this.asrImpl(param);
     }
-    recognizeByUrlImpl(param) {
-        let promise = new EventPromise();
-        let httpClient = new HttpClientVoiceASR();
 
-        let requestInfo = new RequestInfo(PATH_VOP,
-            scope, param, METHOD_POST, false, {
+    asrImpl(param) {
+        let httpClient = new HttpClientVoiceASR();
+        let requestInfo = new RequestInfo(PATH_VOP, param, METHOD_POST, false, {
                 [httpHeader.CONTENT_TYPE]: CONTENT_TYPE_JSON
             });
-
         requestInfo.setHost(HOST_VOP);
-
-        if (this.preRequest(requestInfo)) {
-            httpClient.postWithInfo(requestInfo).on(HttpClientVoiceASR.EVENT_DATA, function (data) {
-                promise.resolve(data);
-            }.bind(this)).bindErrorEvent(promise);
-        } else {
-            return this.registTask(this.recognizeByUrlImpl, param);
-        }
-        return promise;
+        return this.doRequest(requestInfo, httpClient);
     }
+
     text2audio(text, options) {
         let param = {
             tex: text,
             lan: 'zh',
             ctp: 1
         };
-        let promise = this.registTask(this.text2audioImpl, objectTools.merge(param, options));
-        return promise;
+        return this.ttsImpl(param);
     }
-    text2audioImpl(param) {
-        let promise = new EventPromise();
-        let httpClient = new HttpClientVoiceTTS();
 
+    ttsImpl(param) {
+        let httpClient = new HttpClientVoiceTTS();
         let requestInfo = new RequestInfo(PATH_TTS,
-            scope, param, METHOD_POST, true);
+            param, METHOD_POST, true);
 
         requestInfo.setHost(HOST_TSN);
 
-        if (this.preRequest(requestInfo)) {
-            httpClient.postWithInfo(requestInfo).on(HttpClientVoiceTTS.EVENT_DATA, function (data) {
-                promise.resolve(data);
-            }.bind(this)).bindErrorEvent(promise);
-        } else {
-            return this.registTask(this.text2audioImpl, param);
-        }
-        return promise;
+        return this.doRequest(requestInfo, httpClient);
     }
 }
 

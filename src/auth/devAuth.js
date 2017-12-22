@@ -18,7 +18,7 @@ const HttpClient = require('../http/httpClient');
 
 const DevAuthToken = require('./devAuthToken');
 
-const EventEmitter = require('events');
+const objectTool = require('../util/objectTools');
 
 const OPENAPI_TOKEN_URL = 'https://aip.baidubce.com/oauth/2.0/token';
 
@@ -33,21 +33,31 @@ const REQUEST_TOKEN_METHOD = 'post';
  * @param {string} ak API Key.
  * @param {string} sk Secret Key.
  */
-class DevAuth extends EventEmitter {
+class DevAuth {
     constructor(ak, sk) {
-        super();
         this.ak = ak;
         this.sk = sk;
         this.httpClient = new HttpClient();
     }
     gotData(data) {
-        if (data.error) {
-            this.emit(DevAuth.EVENT_GETTOKEN_ERROR,
-                {errorType: DevAuth.EVENT_ERRTYPE_NORMAL, error: data.error});
-        } else {
-            let token = new DevAuthToken(data.access_token, data.expires_in, data.scope);
-            this.emit(DevAuth.EVENT_GETTOKEN_SUCCESS, token);
+        // 如果返回数据非法，此时data为请求数据body
+        if (!objectTool.isObject(data)) {
+            throw {errorType: DevAuth.EVENT_ERRTYPE_ILLEGAL_RESPONSE, error: data};
         }
+        // 如果获取token失败，数据是合法的错误数据
+        if (data.error) {
+            throw {errorType: DevAuth.EVENT_ERRTYPE_NORMAL, error: data.error};
+        } else {
+            // 获取token成功
+            return new DevAuthToken(data.access_token, data.expires_in, data.scope);
+        }
+    }
+    gotDataError(err) {
+        // request.js内部错误封装下返回
+        throw {
+            errorType: DevAuth.EVENT_ERRTYPE_NETWORK,
+            error: err
+        };
     }
     getToken() {
         let options = {
@@ -59,20 +69,15 @@ class DevAuth extends EventEmitter {
                 client_secret: this.sk
             }
         };
-
-        this.httpClient.req(options).on(HttpClient.EVENT_DATA,
-            this.gotData.bind(this)).on(HttpClient.EVENT_ERROR, function (err) {
-                this.emit(DevAuth.EVENT_GETTOKEN_ERROR, {errorType: DevAuth.EVENT_ERRTYPE_NETWORK, error: err});
-            }.bind(this));
-        return this;
+        return this.httpClient.req(options).then(this.gotData.bind(this),
+            this.gotDataError.bind(this))
     }
 }
-DevAuth.EVENT_ERRTYPE_NETWORK = 1;
 
-DevAuth.EVENT_ERRTYPE_NORMAL = 0;
+DevAuth.EVENT_ERRTYPE_ILLEGAL_RESPONSE = "ERRTYPE_ILLEGAL_RESPONSE";
 
-DevAuth.EVENT_GETTOKEN_SUCCESS = 'event_gettoken_success';
+DevAuth.EVENT_ERRTYPE_NETWORK = "ERRTYPE_NETWORK";
 
-DevAuth.EVENT_GETTOKEN_ERROR = 'event_gettoken_error';
+DevAuth.EVENT_ERRTYPE_NORMAL  = "ERRTYPE_NORMAL";
 
 module.exports = DevAuth;

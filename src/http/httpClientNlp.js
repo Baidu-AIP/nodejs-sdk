@@ -16,6 +16,8 @@
  */
 const iconv = require('iconv-lite');
 const HttpClient = require('./httpClient');
+const objectTools = require('../util/objectTools');
+const request = require('request');
 const code = require('../const/code');
 
 /**
@@ -31,18 +33,31 @@ class HttpClientNlp extends HttpClient {
     constructor() {
         super();
     }
-    onResp(error, response, body) {
-        if (error === null) {
-            let buffer = new Buffer(body);
-            let str = iconv.decode(buffer, code.GBK);
-            try {
-                this.emit(HttpClient.EVENT_DATA, JSON.parse(str));
-            } catch (e) {
-                this.emit(HttpClient.EVENT_DATA, str);
-            }
-        } else {
-            this.emit(HttpClient.EVENT_DATA, error);
+    req(options) {
+        // 首先处理设置INTERCEPTOR的情况
+        if (objectTools.isFunction(HttpClient.REQUEST_INTERCEPTOR)) {
+            options = HttpClient.REQUEST_INTERCEPTOR(options);
+        // 其次设置全局request options的
+        } else if (objectTools.isObject(HttpClient.REQUEST_GLOBAL_OPTIONS)) {
+            options = objectTools.merge(HttpClient.REQUEST_GLOBAL_OPTIONS, options);
         }
+
+        return new Promise(function(resolve, reject) {
+            request(options, function(error, response, body) {
+                if (error === null) {
+                    let buffer = new Buffer(body);
+                    let decodedBody = iconv.decode(buffer, code.GBK);
+                    try {
+                        resolve(JSON.parse(decodedBody));
+                    } catch (e) {
+                        // 无法解析json请求，就返回原始body
+                        resolve(decodedBody);
+                    }
+                } else {
+                    reject(error);
+                }
+            });
+        });
     }
     postWithInfo(requestInfo) {
         let body = this.createBody(requestInfo.params);
@@ -54,8 +69,7 @@ class HttpClientNlp extends HttpClient {
             timeout: HttpClient.DEFAULT_TIMEOUT,
             body: body
         };
-        this.req(options);
-        return this;
+        return this.req(options);
     }
     createBody(param) {
         let body = null;
@@ -63,7 +77,5 @@ class HttpClientNlp extends HttpClient {
         return body;
     }
 }
-
-HttpClientNlp.EVENT_DATA = HttpClient.EVENT_DATA;
 
 module.exports = HttpClientNlp;

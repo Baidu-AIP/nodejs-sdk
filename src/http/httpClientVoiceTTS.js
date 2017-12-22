@@ -16,14 +16,12 @@
  */
 
 const HttpClient = require('./httpClient');
-const code = require('../const/code');
-const HttpHeader = require('../const/httpHeader');
-const CONTENT_TYPE_JSON = 'application/json';
 const crypto = require('crypto');
 
 /**
  * HttpClientVoice类
- * 百度语音接口调用封装， 参考文档：http://speech.baidu.com/docs/asr/57
+ * 百度语音接口调用封装
+ * 参考文档：http://speech.baidu.com/docs/asr/57
  *
  * @class
  * @extends HttpClient
@@ -32,17 +30,6 @@ const crypto = require('crypto');
 class HttpClientVoiceTTS extends HttpClient {
     constructor() {
         super();
-    }
-    onResp(error, response, body) {
-        if (error === null) {
-            try {
-                this.emit(HttpClient.EVENT_DATA, JSON.parse(body));
-            } catch (e) {
-                this.emit(HttpClient.EVENT_DATA, {data: body});
-            }
-        } else {
-            this.emit(HttpClient.EVENT_ERROR, error);
-        }
     }
     postWithInfo(requestInfo) {
         requestInfo.params.tok = requestInfo.getAccessToken();
@@ -62,8 +49,12 @@ class HttpClientVoiceTTS extends HttpClient {
             form: requestInfo.params
         };
 
-        this.req(options);
-        return this;
+        return this.req(options).then(function(data) {
+            if (data instanceof Buffer) {
+                return {data: data}
+            }
+            return data;
+        });
     }
     genMd5(str) {
         let md5sum = crypto.createHash('md5');
@@ -72,7 +63,5 @@ class HttpClientVoiceTTS extends HttpClient {
         return str;
     }
 }
-
-HttpClientVoiceTTS.EVENT_DATA = HttpClient.EVENT_DATA;
 
 module.exports = HttpClientVoiceTTS;

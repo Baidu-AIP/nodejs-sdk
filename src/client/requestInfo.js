@@ -35,12 +35,11 @@ const SYMBOL_HTTP_PREFIX = 'http://';
  * @constructor
  */
 class RequestInfo {
-    constructor(path, scope, params, method, isHttp, headers) {
+    constructor(path, params, method, isHttp, headers) {
         this.isHttp = isHttp || false;
         this.method = method;
         this.host = HOST_DEFAULT;
         this.path = path;
-        this.scope = scope;
         this.params = params;
         this.createDate = new Date();
         this.mergeHeaders = headers || {};

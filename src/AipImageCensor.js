@@ -22,9 +22,7 @@ const objectTools = require('./util/objectTools');
 
 const HttpClient = require('./http/httpClient');
 
-const HttpClientForCombo = require('./http/httpClientExt');
-
-const EventPromise = require('./util/eventPromise');
+const HttpClientJson = require('./http/httpClientExt');
 
 const httpHeader = require('./const/httpHeader');
 
@@ -32,17 +30,20 @@ const CONTENT_TYPE_JSON = 'application/json';
 
 const METHOD_POST = 'POST';
 
-const PATH_ANTIPORN = '/rest/2.0/antiporn/v1/detect';
-const PATH_ANTITERROR = '/rest/2.0/antiterror/v1/detect';
+const PATH_USER_DEFINED = '/rest/2.0/solution/v1/img_censor/user_defined';
 const PATH_ANTIPORN_GIF = '/rest/2.0/antiporn/v1/detect_gif';
 const PATH_FACEAUDIT = '/rest/2.0/solution/v1/face_audit';
 const PATH_COMBOCENSOR = '/api/v1/solution/direct/img_censor';
+const PATH_REPORT = '/rpc/2.0/feedback/v1/report';
+
+const PATH_ANTIPORN = '/rest/2.0/antiporn/v1/detect';
+const PATH_ANTITERROR = '/rest/2.0/antiterror/v1/detect';
 
 const scope = require('./const/devScope').DEFAULT;
 
 
 /**
- * AipImageCensor类，构造调用色情识别对象
+ * AipImageCensor类，构造调用图像审核对象
  *
  * @class
  * @extends BaseClient
@@ -55,47 +56,51 @@ class AipImageCensor extends BaseClient {
     constructor(appId, ak, sk) {
         super(appId, ak, sk);
     }
+
     commonImpl(param) {
-        let promise = new EventPromise();
         let httpClient = new HttpClient();
         let apiUrl = param.targetPath;
         delete param.targetPath;
         let requestInfo = new RequestInfo(apiUrl,
-            scope, param, METHOD_POST);
+            param, METHOD_POST);
+        return this.doRequest(requestInfo, httpClient);
+    }
 
-        if (this.preRequest(requestInfo)) {
-            httpClient.postWithInfo(requestInfo).on(HttpClient.EVENT_DATA, function (data) {
-                promise.resolve(data);
-            }.bind(this)).bindErrorEvent(promise);
-        } else {
-            return this.registTask(this.commonImpl, param);
-        }
-        return promise;
+    jsonRequestImpl(param) {
+        let httpClient = new HttpClientJson();
+        let apiUrl = param.targetPath;
+        delete param.targetPath;
+        let requestInfo = new RequestInfo(apiUrl,
+            param, METHOD_POST, false, {
+                [httpHeader.CONTENT_TYPE]: CONTENT_TYPE_JSON
+            });
+        return this.doRequest(requestInfo, httpClient);
     }
-    antiPorn(image) {
-        let param = {
-            image: image,
-            targetPath: PATH_ANTIPORN
-        };
-        let promise = this.registTask(this.commonImpl, param);
-        return promise;
-    }
-    antiPornGif(image) {
+
+    antiPornGif(image, options) {
         let param = {
             image: image,
             targetPath: PATH_ANTIPORN_GIF
         };
-        let promise = this.registTask(this.commonImpl, param);
-        return promise;
+        return this.commonImpl(objectTools.merge(param, options));
     }
-    antiTerror(image) {
+
+    antiPorn(image, options) {
+        let param = {
+            image: image,
+            targetPath: PATH_ANTIPORN
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    antiTerror(image, options) {
         let param = {
             image: image,
             targetPath: PATH_ANTITERROR
-        }
-        let promise = this.registTask(this.commonImpl, param);
-        return promise;
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
+
     faceAudit(images, type, configId) {
         let param = {configId: configId};
         if (type === 'url') {
@@ -108,10 +113,10 @@ class AipImageCensor extends BaseClient {
             param.images = images.join(',');
         }
         param.targetPath = PATH_FACEAUDIT;
-        let promise = this.registTask(this.commonImpl, param);
-        return promise;
+        return this.commonImpl(param);
     }
-    imageCensorComb(image, type, censors, scenesConf) {
+
+    imageCensorUserDefined(image, type) {
         let param = {};
         if (type === 'url') {
             param.imgUrl = image;
@@ -119,27 +124,29 @@ class AipImageCensor extends BaseClient {
         if (type === 'base64') {
             param.image = image;
         }
-        param.scenes = censors;
-        param.sceneConf = scenesConf;
-
-        let promise = this.registTask(this.imageCensorCombImpl, param);
-        return promise;
+        param.targetPath = PATH_USER_DEFINED;
+        return this.commonImpl(param);
     }
-    imageCensorCombImpl(param) {
-        let promise = new EventPromise();
-        let httpClient = new HttpClientForCombo();
-        let requestInfo = new RequestInfo(PATH_COMBOCENSOR,
-            scope, param, METHOD_POST, false, {
-                [httpHeader.CONTENT_TYPE]: CONTENT_TYPE_JSON
-            });
-        if (this.preRequest(requestInfo)) {
-            httpClient.postWithInfo(requestInfo).on(HttpClient.EVENT_DATA, function (data) {
-                promise.resolve(data);
-            }.bind(this)).bindErrorEvent(promise);
-        } else {
-            return this.registTask(this.imageCensorCombImpl, param);
+
+    imageCensorComb(image, type, scenes, scenesConf) {
+        let param = {};
+        if (type === 'url') {
+            param.imgUrl = image;
         }
-        return promise;
+        if (type === 'base64') {
+            param.image = image;
+        }
+        param.scenes = scenes;
+        param.sceneConf = scenesConf;
+        param.targetPath = PATH_COMBOCENSOR;
+        return this.jsonRequestImpl(param);
+    }
+
+    report(feedback) {
+        let param = {};
+        param.feedback = feedback;
+        param.targetPath = PATH_REPORT;
+        return this.jsonRequestImpl(param);
     }
 }
 
