@@ -19,7 +19,7 @@ const BaseClient = require('./client/baseClient');
 
 const RequestInfo = require('./client/requestInfo');
 
-const HttpClient = require('./http/HttpClientNlp');
+const HttpClient = require('./http/httpClientNlp');
 
 const objectTools = require('./util/objectTools');
 
