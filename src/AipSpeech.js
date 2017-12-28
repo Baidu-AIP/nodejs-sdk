@@ -18,6 +18,8 @@ const BaseClient = require('./client/baseClient');
 
 const RequestInfo = require('./client/requestInfo');
 
+const objectTools = require('./util/objectTools');
+
 const HttpClientVoiceASR = require('./http/httpClientVoiceASR');
 
 const HttpClientVoiceTTS = require('./http/httpClientVoiceTTS');
@@ -59,7 +61,7 @@ class AipSpeech extends BaseClient {
             len: buffer.toString(code.BIN).length
         };
 
-        return this.asrImpl(param);
+        return this.asrImpl(objectTools.merge(param, options));
     }
 
     recognizeByUrl(url, callback, format, rate, options) {
@@ -70,7 +72,7 @@ class AipSpeech extends BaseClient {
             channel: 1,
             callback: callback
         };
-        return this.asrImpl(param);
+        return this.asrImpl(objectTools.merge(param, options));
     }
 
     asrImpl(param) {
@@ -88,7 +90,7 @@ class AipSpeech extends BaseClient {
             lan: 'zh',
             ctp: 1
         };
-        return this.ttsImpl(param);
+        return this.ttsImpl(objectTools.merge(param, options));
     }
 
     ttsImpl(param) {
