@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/meteorasd555/learn.svg?branch=master)](https://travis-ci.org/meteorasd555/learn)
+[![npm](https://img.shields.io/npm/v/baidu-aip-sdk.svg)](https://www.npmjs.com/package/baidu-aip-sdk)
+
 # 安装百度AI开放平台 Node.js SDK
 
 **Node.js SDK目录结构**

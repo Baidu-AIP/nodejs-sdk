@@ -54,11 +54,11 @@ class AipSpeech extends BaseClient {
 
     recognize(buffer, format, rate, options) {
         let param = {
-            speech: buffer.toString(code.BASE64),
+            speech: buffer && buffer.toString(code.BASE64),
             format: format,
             rate: rate,
             channel: 1,
-            len: buffer.toString(code.BIN).length
+            len: buffer && buffer.toString(code.BIN).length
         };
 
         return this.asrImpl(objectTools.merge(param, options));

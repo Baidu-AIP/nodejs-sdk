@@ -95,7 +95,7 @@ class AipFace extends BaseClient {
      */
     match(images, options) {
         let param = {
-            images: images.join(','),
+            images: images && images.join(','),
             targetPath: MATCH_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
