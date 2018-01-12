@@ -34,6 +34,7 @@ const WORD_SIM_EMBEDDING_PATH = '/rpc/2.0/nlp/v2/word_emb_sim';
 const SIMNET_PATH = '/rpc/2.0/nlp/v2/simnet';
 const COMMENT_TAG_PATH = '/rpc/2.0/nlp/v2/comment_tag';
 const SENTIMENT_CLASSIFY_PATH = '/rpc/2.0/nlp/v1/sentiment_classify';
+const KEYWORD_PATH = '/rpc/2.0/nlp/v1/keyword';
 
 
 /**
@@ -207,6 +208,24 @@ class AipNlp extends BaseClient {
         let param = {
             text: text,
             targetPath: SENTIMENT_CLASSIFY_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 文本标签接口
+     *
+     * @param {string} title - 篇章的标题，最大80字节
+     * @param {string} content - 篇章的正文，最大65535字节
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    keyword(title, content, options) {
+        let param = {
+            title: title,
+            content: content,
+            targetPath: KEYWORD_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }

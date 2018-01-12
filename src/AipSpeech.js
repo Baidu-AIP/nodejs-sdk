@@ -49,7 +49,8 @@ const PATH_TTS = '/text2audio';
  */
 class AipSpeech extends BaseClient {
     constructor(appId, ak, sk) {
-        super(appId, ak, sk);
+        // 在speech.baidu.com上创建的应用需要跳过此项权限检查
+        super(appId, ak, sk, {isSkipScopeCheck: true});
     }
 
     recognize(buffer, format, rate, options) {
@@ -102,6 +103,7 @@ class AipSpeech extends BaseClient {
 
         return this.doRequest(requestInfo, httpClient);
     }
+
 }
 
 module.exports = AipSpeech;

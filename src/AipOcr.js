@@ -38,6 +38,7 @@ const VEHICLE_LICENSE_PATH = '/rest/2.0/ocr/v1/vehicle_license';
 const LICENSE_PLATE_PATH = '/rest/2.0/ocr/v1/license_plate';
 const BUSINESS_LICENSE_PATH = '/rest/2.0/ocr/v1/business_license';
 const RECEIPT_PATH = '/rest/2.0/ocr/v1/receipt';
+const CUSTOM_PATH = '/rest/2.0/solution/v1/iocr/recognise';
 const TABLE_RECOGNIZE_PATH = '/rest/2.0/solution/v1/form_ocr/request';
 const TABLE_RESULT_GET_PATH = '/rest/2.0/solution/v1/form_ocr/get_request_result';
 
@@ -383,6 +384,24 @@ class AipOcr extends BaseClient {
         let param = {
             image: image,
             targetPath: RECEIPT_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 自定义模版文字识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {string} templateSign - 您在自定义文字识别平台制作的模版的ID
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    custom(image, templateSign, options) {
+        let param = {
+            image: image,
+            templateSign: templateSign,
+            targetPath: CUSTOM_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }

@@ -31,6 +31,7 @@ const DETECT_PATH = '/rest/2.0/face/v2/detect';
 const MATCH_PATH = '/rest/2.0/face/v2/match';
 const IDENTIFY_PATH = '/rest/2.0/face/v2/identify';
 const VERIFY_PATH = '/rest/2.0/face/v2/verify';
+const MULTI_IDENTIFY_PATH = '/rest/2.0/face/v2/multi-identify';
 const USER_ADD_PATH = '/rest/2.0/face/v2/faceset/user/add';
 const USER_UPDATE_PATH = '/rest/2.0/face/v2/faceset/user/update';
 const USER_DELETE_PATH = '/rest/2.0/face/v2/faceset/user/delete';
@@ -139,6 +140,27 @@ class AipFace extends BaseClient {
             group_id: groupId,
             image: image,
             targetPath: VERIFY_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * M:N 识别接口
+     *
+     * @param {string} groupId - 用户组id，标识一组用户（由数字、字母、下划线组成），长度限制128B。如果需要将一个uid注册到多个group下，group\_id需要用多个逗号分隔，每个group_id长度限制为48个英文字符。**注：group无需单独创建，注册用户时则会自动创建group。**<br>**产品建议**：根据您的业务需求，可以将需要注册的用户，按照业务划分，分配到不同的group下，例如按照会员手机尾号作为groupid，用于刷脸支付、会员计费消费等，这样可以尽可能控制每个group下的用户数与人脸数，提升检索的准确率
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   ext_fields 特殊返回信息，多个用逗号分隔，取值固定: 目前支持faceliveness(活体检测)。**注：需要用于判断活体的图片，图片中的人脸像素面积需要不小于100px\*100px，人脸长宽与图片长宽比例，不小于1/3**
+     *   detect_top_num 检测多少个人脸进行比对，默认值1（最对返回10个）
+     *   user_top_num 返回识别结果top人数”，当同一个人有多张图片时，只返回比对最高的1个分数（即，scores参数只有一个值），默认为1（最多返回20个）
+     * @return {Promise} - 标准Promise对象
+     */
+    multiIdentify(groupId, image, options) {
+        let param = {
+            group_id: groupId,
+            image: image,
+            targetPath: MULTI_IDENTIFY_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
