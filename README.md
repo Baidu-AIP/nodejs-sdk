@@ -14,7 +14,7 @@
         ├── AipOcr.js                              //文字识别交互类
         ├── AipFace.js                             //人脸识别交互类
         ├── AipNlp.js                              //语言处理基础技术交互类
-        ├── AipImageCensor.js                      //图像审核交互类
+        ├── AipContentCensor.js                    //内容审核交互类
         ├── AipImageClassify.js                    //图像识别交互类
         ├── AipImageSearch.js                      //图像搜索交互类
         ├── AipKg.js                               //知识图谱交互类
