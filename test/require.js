@@ -3,7 +3,7 @@
 let should = require('should');
 
 let services = [
-    'imageCensor',
+    'contentCensor',
     'imageSearch',
     'imageClassify',
     'face',

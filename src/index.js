@@ -19,7 +19,7 @@
 module.exports = {
     imageSearch: require('./AipImageSearch'),
     imageClassify: require('./AipImageClassify'),
-    imageCensor: require('./AipImageCensor'),
+    contentCensor: require('./AipContentCensor'),
     face: require('./AipFace'),
     ocr: require('./AipOcr'),
     nlp: require('./AipNlp'),
