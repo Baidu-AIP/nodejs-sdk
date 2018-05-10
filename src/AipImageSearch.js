@@ -66,6 +66,7 @@ class AipImageSearch extends BaseClient {
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
      *   brief 检索时原样带回,最长256B。
+     *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
      * @return {Promise} - 标准Promise对象
      */
     sameHqAdd(image, options) {
@@ -82,6 +83,10 @@ class AipImageSearch extends BaseClient {
      * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
+     *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
+     *   tag_logic 检索时tag之间的逻辑， 0：逻辑and，1：逻辑or
+     *   pn 分页功能，起始位置，例：0。未指定分页时，默认返回前300个结果；接口返回数量最大限制1000条，例如：起始位置为900，截取条数500条，接口也只返回第900 - 1000条的结果，共计100条
+     *   rn 分页功能，截取条数，例：250
      * @return {Promise} - 标准Promise对象
      */
     sameHqSearch(image, options) {
@@ -131,6 +136,7 @@ class AipImageSearch extends BaseClient {
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
      *   brief 检索时原样带回,最长256B。
+     *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
      * @return {Promise} - 标准Promise对象
      */
     similarAdd(image, options) {
@@ -147,6 +153,10 @@ class AipImageSearch extends BaseClient {
      * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
+     *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
+     *   tag_logic 检索时tag之间的逻辑， 0：逻辑and，1：逻辑or
+     *   pn 分页功能，起始位置，例：0。未指定分页时，默认返回前300个结果；接口返回数量最大限制1000条，例如：起始位置为900，截取条数500条，接口也只返回第900 - 1000条的结果，共计100条
+     *   rn 分页功能，截取条数，例：250
      * @return {Promise} - 标准Promise对象
      */
     similarSearch(image, options) {
@@ -216,6 +226,8 @@ class AipImageSearch extends BaseClient {
      * @description options - options列表:
      *   class_id1 商品分类维度1，支持1-60范围内的整数。检索时可圈定该分类维度进行检索
      *   class_id2 商品分类维度1，支持1-60范围内的整数。检索时可圈定该分类维度进行检索
+     *   pn 分页功能，起始位置，例：0。未指定分页时，默认返回前300个结果；接口返回数量最大限制1000条，例如：起始位置为900，截取条数500条，接口也只返回第900 - 1000条的结果，共计100条
+     *   rn 分页功能，截取条数，例：250
      * @return {Promise} - 标准Promise对象
      */
     productSearch(image, options) {

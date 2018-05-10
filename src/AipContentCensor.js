@@ -38,7 +38,7 @@ const PATH_REPORT = '/rpc/2.0/feedback/v1/report';
 
 const PATH_ANTIPORN = '/rest/2.0/antiporn/v1/detect';
 const PATH_ANTITERROR = '/rest/2.0/antiterror/v1/detect';
-const PATH_ANTISPAM = '/rest/2.0/antispam/v1/spam';
+const PATH_ANTISPAM = '/rest/2.0/antispam/v2/spam';
 
 const scope = require('./const/devScope').DEFAULT;
 

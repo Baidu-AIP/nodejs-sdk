@@ -38,10 +38,17 @@ const VEHICLE_LICENSE_PATH = '/rest/2.0/ocr/v1/vehicle_license';
 const LICENSE_PLATE_PATH = '/rest/2.0/ocr/v1/license_plate';
 const BUSINESS_LICENSE_PATH = '/rest/2.0/ocr/v1/business_license';
 const RECEIPT_PATH = '/rest/2.0/ocr/v1/receipt';
-const CUSTOM_PATH = '/rest/2.0/solution/v1/iocr/recognise';
 const FORM_PATH = '/rest/2.0/ocr/v1/form';
 const TABLE_RECOGNIZE_PATH = '/rest/2.0/solution/v1/form_ocr/request';
 const TABLE_RESULT_GET_PATH = '/rest/2.0/solution/v1/form_ocr/get_request_result';
+const VAT_INVOICE_PATH = '/rest/2.0/ocr/v1/vat_invoice';
+const QRCODE_PATH = '/rest/2.0/ocr/v1/qrcode';
+const NUMBERS_PATH = '/rest/2.0/ocr/v1/numbers';
+const LOTTERY_PATH = '/rest/2.0/ocr/v1/lottery';
+const PASSPORT_PATH = '/rest/2.0/ocr/v1/passport';
+const BUSINESS_CARD_PATH = '/rest/2.0/ocr/v1/business_card';
+const HANDWRITING_PATH = '/rest/2.0/ocr/v1/handwriting';
+const CUSTOM_PATH = '/rest/2.0/solution/v1/iocr/recognise';
 
 
 /**
@@ -390,24 +397,6 @@ class AipOcr extends BaseClient {
     }
 
     /**
-     * 自定义模版文字识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {string} templateSign - 您在自定义文字识别平台制作的模版的ID
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    custom(image, templateSign, options) {
-        let param = {
-            image: image,
-            templateSign: templateSign,
-            targetPath: CUSTOM_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
      * 表格文字识别同步接口接口
      *
      * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
@@ -452,6 +441,140 @@ class AipOcr extends BaseClient {
         let param = {
             request_id: requestId,
             targetPath: TABLE_RESULT_GET_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 增值税发票识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    vatInvoice(image, options) {
+        let param = {
+            image: image,
+            targetPath: VAT_INVOICE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 二维码识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    qrcode(image, options) {
+        let param = {
+            image: image,
+            targetPath: QRCODE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 数字识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   recognize_granularity 是否定位单字符位置，big：不定位单字符位置，默认值；small：定位单字符位置
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+     * @return {Promise} - 标准Promise对象
+     */
+    numbers(image, options) {
+        let param = {
+            image: image,
+            targetPath: NUMBERS_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 彩票识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   recognize_granularity 是否定位单字符位置，big：不定位单字符位置，默认值；small：定位单字符位置
+     * @return {Promise} - 标准Promise对象
+     */
+    lottery(image, options) {
+        let param = {
+            image: image,
+            targetPath: LOTTERY_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 护照识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    passport(image, options) {
+        let param = {
+            image: image,
+            targetPath: PASSPORT_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 名片识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    businessCard(image, options) {
+        let param = {
+            image: image,
+            targetPath: BUSINESS_CARD_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 手写文字识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   recognize_granularity 是否定位单字符位置，big：不定位单字符位置，默认值；small：定位单字符位置
+     * @return {Promise} - 标准Promise对象
+     */
+    handwriting(image, options) {
+        let param = {
+            image: image,
+            targetPath: HANDWRITING_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 自定义模板文字识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {string} templateSign - 您在自定义文字识别平台制作的模板的ID
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    custom(image, templateSign, options) {
+        let param = {
+            image: image,
+            templateSign: templateSign,
+            targetPath: CUSTOM_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }

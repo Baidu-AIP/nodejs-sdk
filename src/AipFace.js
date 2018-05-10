@@ -21,27 +21,28 @@ const BaseClient = require('./client/baseClient');
 
 const RequestInfo = require('./client/requestInfo');
 
-const HttpClient = require('./http/httpClient');
+const HttpClient = require('./http/HttpClientExt');
 
 const objectTools = require('./util/objectTools');
 
 const METHOD_POST = 'POST';
 
-const DETECT_PATH = '/rest/2.0/face/v2/detect';
-const MATCH_PATH = '/rest/2.0/face/v2/match';
-const IDENTIFY_PATH = '/rest/2.0/face/v2/identify';
-const VERIFY_PATH = '/rest/2.0/face/v2/verify';
-const MULTI_IDENTIFY_PATH = '/rest/2.0/face/v2/multi-identify';
-const USER_ADD_PATH = '/rest/2.0/face/v2/faceset/user/add';
-const USER_UPDATE_PATH = '/rest/2.0/face/v2/faceset/user/update';
-const USER_DELETE_PATH = '/rest/2.0/face/v2/faceset/user/delete';
-const USER_GET_PATH = '/rest/2.0/face/v2/faceset/user/get';
-const GROUP_GETLIST_PATH = '/rest/2.0/face/v2/faceset/group/getlist';
-const GROUP_GETUSERS_PATH = '/rest/2.0/face/v2/faceset/group/getusers';
-const GROUP_ADDUSER_PATH = '/rest/2.0/face/v2/faceset/group/adduser';
-const GROUP_DELETEUSER_PATH = '/rest/2.0/face/v2/faceset/group/deleteuser';
-const PERSON_VERIFY_PATH = '/rest/2.0/face/v2/person/verify';
-const FACEVERIFY_PATH = '/rest/2.0/face/v2/faceverify';
+const DETECT_PATH = '/rest/2.0/face/v3/detect';
+const SEARCH_PATH = '/rest/2.0/face/v3/search';
+const USER_ADD_PATH = '/rest/2.0/face/v3/faceset/user/add';
+const USER_UPDATE_PATH = '/rest/2.0/face/v3/faceset/user/update';
+const FACE_DELETE_PATH = '/rest/2.0/face/v3/faceset/face/delete';
+const USER_GET_PATH = '/rest/2.0/face/v3/faceset/user/get';
+const FACE_GETLIST_PATH = '/rest/2.0/face/v3/faceset/face/getlist';
+const GROUP_GETUSERS_PATH = '/rest/2.0/face/v3/faceset/group/getusers';
+const USER_COPY_PATH = '/rest/2.0/face/v3/faceset/user/copy';
+const USER_DELETE_PATH = '/rest/2.0/face/v3/faceset/user/delete';
+const GROUP_ADD_PATH = '/rest/2.0/face/v3/faceset/group/add';
+const GROUP_DELETE_PATH = '/rest/2.0/face/v3/faceset/group/delete';
+const GROUP_GETLIST_PATH = '/rest/2.0/face/v3/faceset/group/getlist';
+const PERSON_VERIFY_PATH = '/rest/2.0/face/v3/person/verify';
+const VIDEO_SESSIONCODE_PATH = '/rest/2.0/face/v1/faceliveness/sessioncode';
+const VIDEO_FACELIVENESS_PATH = '/rest/2.0/face/v1/faceliveness/verify';
 
 
 /**
@@ -70,99 +71,44 @@ class AipFace extends BaseClient {
     /**
      * 人脸检测接口
      *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {string} image - 图片信息(**总数据大小应小于10M**)，图片上传方式根据image_type来判断
+     * @param {string} imageType - 图片类型 **BASE64**:图片的base64值，base64编码后的图片数据，需urlencode，编码后的图片大小不超过2M；**URL**:图片的 URL地址( 可能由于网络等原因导致下载图片时间过长)**；FACE_TOKEN**: 人脸图片的唯一标识，调用人脸检测接口时，会为每个人脸图片赋予一个唯一的FACE_TOKEN，同一张图片多次检测得到的FACE_TOKEN是同一个
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   max_face_num 最多处理人脸数目，默认值1
-     *   face_fields 包括age,beauty,expression,faceshape,gender,glasses,landmark,race,qualities信息，逗号分隔，默认只返回人脸框、概率和旋转角度
+     *   face_field 包括**age,beauty,expression,faceshape,gender,glasses,landmark,race,quality,facetype,parsing信息**  <br> 逗号分隔. 默认只返回face_token、人脸框、概率和旋转角度
+     *   max_face_num 最多处理人脸的数目，默认值为1，仅检测图片中面积最大的那个人脸；**最大值10**，检测图片中面积最大的几张人脸。
+     *   face_type 人脸的类型 **LIVE**表示生活照：通常为手机、相机拍摄的人像图片、或从网络获取的人像图片等**IDCARD**表示身份证芯片照：二代身份证内置芯片中的人像照片 **WATERMARK**表示带水印证件照：一般为带水印的小图，如公安网小图 **CERT**表示证件照片：如拍摄的身份证、工卡、护照、学生证等证件图片 默认**LIVE**
      * @return {Promise} - 标准Promise对象
      */
-    detect(image, options) {
+    detect(image, imageType, options) {
         let param = {
             image: image,
+            image_type: imageType,
             targetPath: DETECT_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
 
     /**
-     * 人脸比对接口
+     * 人脸搜索接口
      *
-     * @param {string} images - base64编码后的多张图片数据，半角逗号分隔，单次请求总共最大20M
+     * @param {string} image - 图片信息(**总数据大小应小于10M**)，图片上传方式根据image_type来判断
+     * @param {string} imageType - 图片类型 **BASE64**:图片的base64值，base64编码后的图片数据，需urlencode，编码后的图片大小不超过2M；**URL**:图片的 URL地址( 可能由于网络等原因导致下载图片时间过长)**；FACE_TOKEN**: 人脸图片的唯一标识，调用人脸检测接口时，会为每个人脸图片赋予一个唯一的FACE_TOKEN，同一张图片多次检测得到的FACE_TOKEN是同一个
+     * @param {string} groupIdList - 从指定的group中进行查找 用逗号分隔，**上限20个**
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   ext_fields 返回质量信息，取值固定:目前支持qualities(质量检测)。(对所有图片都会做改处理)
-     *   image_liveness 返回的活体信息，“faceliveness,faceliveness” 表示对比对的两张图片都做活体检测；“,faceliveness” 表示对第一张图片不做活体检测、第二张图做活体检测；“faceliveness,” 表示对第一张图片做活体检测、第二张图不做活体检测；<br>**注：需要用于判断活体的图片，图片中的人脸像素面积需要不小于100px\*100px，人脸长宽与图片长宽比例，不小于1/3**
-     *   types 请求对比的两张图片的类型，示例：“7,13”<br>**12**表示带水印证件照：一般为带水印的小图，如公安网小图<br>**7**表示生活照：通常为手机、相机拍摄的人像图片、或从网络获取的人像图片等<br>**13**表示证件照片：如拍摄的身份证、工卡、护照、学生证等证件图片，**注**：需要确保人脸部分不可太小，通常为100px\*100px
+     *   quality_control 图片质量控制  **NONE**: 不进行控制 **LOW**:较低的质量要求 **NORMAL**: 一般的质量要求 **HIGH**: 较高的质量要求 **默认 NONE**
+     *   liveness_control 活体检测控制  **NONE**: 不进行控制 **LOW**:较低的活体要求(高通过率 低攻击拒绝率) **NORMAL**: 一般的活体要求(平衡的攻击拒绝率, 通过率) **HIGH**: 较高的活体要求(高攻击拒绝率 低通过率) **默认NONE**
+     *   user_id 当需要对特定用户进行比对时，指定user_id进行比对。即人脸认证功能。
+     *   max_user_num 查找后返回的用户数量。返回相似度最高的几个用户，默认为1，最多返回20个。
      * @return {Promise} - 标准Promise对象
      */
-    match(images, options) {
+    search(image, imageType, groupIdList, options) {
         let param = {
-            images: images && images.join(','),
-            targetPath: MATCH_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 人脸识别接口
-     *
-     * @param {string} groupId - 用户组id，标识一组用户（由数字、字母、下划线组成），长度限制128B。如果需要将一个uid注册到多个group下，group\_id需要用多个逗号分隔，每个group_id长度限制为48个英文字符。**注：group无需单独创建，注册用户时则会自动创建group。**<br>**产品建议**：根据您的业务需求，可以将需要注册的用户，按照业务划分，分配到不同的group下，例如按照会员手机尾号作为groupid，用于刷脸支付、会员计费消费等，这样可以尽可能控制每个group下的用户数与人脸数，提升检索的准确率
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     *   ext_fields 特殊返回信息，多个用逗号分隔，取值固定: 目前支持faceliveness(活体检测)。**注：需要用于判断活体的图片，图片中的人脸像素面积需要不小于100px\*100px，人脸长宽与图片长宽比例，不小于1/3**
-     *   user_top_num 返回用户top数，默认为1，最多返回5个
-     * @return {Promise} - 标准Promise对象
-     */
-    identifyUser(groupId, image, options) {
-        let param = {
-            group_id: groupId,
             image: image,
-            targetPath: IDENTIFY_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 人脸认证接口
-     *
-     * @param {string} uid - 用户id（由数字、字母、下划线组成），长度限制128B
-     * @param {string} groupId - 用户组id，标识一组用户（由数字、字母、下划线组成），长度限制128B。如果需要将一个uid注册到多个group下，group\_id需要用多个逗号分隔，每个group_id长度限制为48个英文字符。**注：group无需单独创建，注册用户时则会自动创建group。**<br>**产品建议**：根据您的业务需求，可以将需要注册的用户，按照业务划分，分配到不同的group下，例如按照会员手机尾号作为groupid，用于刷脸支付、会员计费消费等，这样可以尽可能控制每个group下的用户数与人脸数，提升检索的准确率
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     *   top_num 返回用户top数，默认为1
-     *   ext_fields 特殊返回信息，多个用逗号分隔，取值固定: 目前支持faceliveness(活体检测)。**注：需要用于判断活体的图片，图片中的人脸像素面积需要不小于100px\*100px，人脸长宽与图片长宽比例，不小于1/3**
-     * @return {Promise} - 标准Promise对象
-     */
-    verifyUser(uid, groupId, image, options) {
-        let param = {
-            uid: uid,
-            group_id: groupId,
-            image: image,
-            targetPath: VERIFY_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * M:N 识别接口
-     *
-     * @param {string} groupId - 用户组id，标识一组用户（由数字、字母、下划线组成），长度限制128B。如果需要将一个uid注册到多个group下，group\_id需要用多个逗号分隔，每个group_id长度限制为48个英文字符。**注：group无需单独创建，注册用户时则会自动创建group。**<br>**产品建议**：根据您的业务需求，可以将需要注册的用户，按照业务划分，分配到不同的group下，例如按照会员手机尾号作为groupid，用于刷脸支付、会员计费消费等，这样可以尽可能控制每个group下的用户数与人脸数，提升检索的准确率
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     *   ext_fields 特殊返回信息，多个用逗号分隔，取值固定: 目前支持faceliveness(活体检测)。**注：需要用于判断活体的图片，图片中的人脸像素面积需要不小于100px\*100px，人脸长宽与图片长宽比例，不小于1/3**
-     *   detect_top_num 检测多少个人脸进行比对，默认值1（最对返回10个）
-     *   user_top_num 返回识别结果top人数”，当同一个人有多张图片时，只返回比对最高的1个分数（即，scores参数只有一个值），默认为1（最多返回20个）
-     * @return {Promise} - 标准Promise对象
-     */
-    multiIdentify(groupId, image, options) {
-        let param = {
-            group_id: groupId,
-            image: image,
-            targetPath: MULTI_IDENTIFY_PATH
+            image_type: imageType,
+            group_id_list: groupIdList,
+            targetPath: SEARCH_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
@@ -170,21 +116,23 @@ class AipFace extends BaseClient {
     /**
      * 人脸注册接口
      *
-     * @param {string} uid - 用户id（由数字、字母、下划线组成），长度限制128B
-     * @param {string} userInfo - 用户资料，长度限制256B
-     * @param {string} groupId - 用户组id，标识一组用户（由数字、字母、下划线组成），长度限制128B。如果需要将一个uid注册到多个group下，group\_id需要用多个逗号分隔，每个group_id长度限制为48个英文字符。**注：group无需单独创建，注册用户时则会自动创建group。**<br>**产品建议**：根据您的业务需求，可以将需要注册的用户，按照业务划分，分配到不同的group下，例如按照会员手机尾号作为groupid，用于刷脸支付、会员计费消费等，这样可以尽可能控制每个group下的用户数与人脸数，提升检索的准确率
-     * @param {string} image - 图像base64编码，**每次仅支持单张图片，图片编码后大小不超过10M**。为保证后续识别的效果较佳，建议注册的人脸，为用户正面人脸。
+     * @param {string} image - 图片信息(**总数据大小应小于10M**)，图片上传方式根据image_type来判断
+     * @param {string} imageType - 图片类型 **BASE64**:图片的base64值，base64编码后的图片数据，需urlencode，编码后的图片大小不超过2M；**URL**:图片的 URL地址( 可能由于网络等原因导致下载图片时间过长)**；FACE_TOKEN**: 人脸图片的唯一标识，调用人脸检测接口时，会为每个人脸图片赋予一个唯一的FACE_TOKEN，同一张图片多次检测得到的FACE_TOKEN是同一个
+     * @param {string} groupId - 用户组id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} userId - 用户id（由数字、字母、下划线组成），长度限制128B
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   action_type 参数包含append、replace。**如果为“replace”，则每次注册时进行替换replace（新增或更新）操作，默认为append操作**。例如：uid在库中已经存在时，对此uid重复注册时，新注册的图片默认会**追加**到该uid下，如果手动选择`action_type:replace`，则会用新图替换库中该uid下所有图片。
+     *   user_info 用户资料，长度限制256B
+     *   quality_control 图片质量控制  **NONE**: 不进行控制 **LOW**:较低的质量要求 **NORMAL**: 一般的质量要求 **HIGH**: 较高的质量要求 **默认 NONE**
+     *   liveness_control 活体检测控制  **NONE**: 不进行控制 **LOW**:较低的活体要求(高通过率 低攻击拒绝率) **NORMAL**: 一般的活体要求(平衡的攻击拒绝率, 通过率) **HIGH**: 较高的活体要求(高攻击拒绝率 低通过率) **默认NONE**
      * @return {Promise} - 标准Promise对象
      */
-    addUser(uid, userInfo, groupId, image, options) {
+    addUser(image, imageType, groupId, userId, options) {
         let param = {
-            uid: uid,
-            user_info: userInfo,
-            group_id: groupId,
             image: image,
+            image_type: imageType,
+            group_id: groupId,
+            user_id: userId,
             targetPath: USER_ADD_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
@@ -193,21 +141,23 @@ class AipFace extends BaseClient {
     /**
      * 人脸更新接口
      *
-     * @param {string} uid - 用户id（由数字、字母、下划线组成），长度限制128B
-     * @param {string} userInfo - 用户资料，长度限制256B
+     * @param {string} image - 图片信息(**总数据大小应小于10M**)，图片上传方式根据image_type来判断
+     * @param {string} imageType - 图片类型 **BASE64**:图片的base64值，base64编码后的图片数据，需urlencode，编码后的图片大小不超过2M；**URL**:图片的 URL地址( 可能由于网络等原因导致下载图片时间过长)**；FACE_TOKEN**: 人脸图片的唯一标识，调用人脸检测接口时，会为每个人脸图片赋予一个唯一的FACE_TOKEN，同一张图片多次检测得到的FACE_TOKEN是同一个
      * @param {string} groupId - 更新指定groupid下uid对应的信息
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {string} userId - 用户id（由数字、字母、下划线组成），长度限制128B
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   action_type 目前仅支持replace，uid不存在时，不报错，会自动变为注册操作；未选择该参数时，如果uid不存在会提示错误
+     *   user_info 用户资料，长度限制256B
+     *   quality_control 图片质量控制  **NONE**: 不进行控制 **LOW**:较低的质量要求 **NORMAL**: 一般的质量要求 **HIGH**: 较高的质量要求 **默认 NONE**
+     *   liveness_control 活体检测控制  **NONE**: 不进行控制 **LOW**:较低的活体要求(高通过率 低攻击拒绝率) **NORMAL**: 一般的活体要求(平衡的攻击拒绝率, 通过率) **HIGH**: 较高的活体要求(高攻击拒绝率 低通过率) **默认NONE**
      * @return {Promise} - 标准Promise对象
      */
-    updateUser(uid, userInfo, groupId, image, options) {
+    updateUser(image, imageType, groupId, userId, options) {
         let param = {
-            uid: uid,
-            user_info: userInfo,
-            group_id: groupId,
             image: image,
+            image_type: imageType,
+            group_id: groupId,
+            user_id: userId,
             targetPath: USER_UPDATE_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
@@ -216,16 +166,19 @@ class AipFace extends BaseClient {
     /**
      * 人脸删除接口
      *
-     * @param {string} uid - 用户id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} userId - 用户id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} groupId - 用户组id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} faceToken - 需要删除的人脸图片token，（由数字、字母、下划线组成）长度限制64B
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   group_id 删除指定groupid下uid对应的信息
      * @return {Promise} - 标准Promise对象
      */
-    deleteUser(uid, options) {
+    faceDelete(userId, groupId, faceToken, options) {
         let param = {
-            uid: uid,
-            targetPath: USER_DELETE_PATH
+            user_id: userId,
+            group_id: groupId,
+            face_token: faceToken,
+            targetPath: FACE_DELETE_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
@@ -233,44 +186,47 @@ class AipFace extends BaseClient {
     /**
      * 用户信息查询接口
      *
-     * @param {string} uid - 用户id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} userId - 用户id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} groupId - 用户组id（由数字、字母、下划线组成），长度限制128B
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   group_id 选择指定group_id则只查找group列表下的uid内容，如果不指定则查找所有group下对应uid的信息
      * @return {Promise} - 标准Promise对象
      */
-    getUser(uid, options) {
+    getUser(userId, groupId, options) {
         let param = {
-            uid: uid,
+            user_id: userId,
+            group_id: groupId,
             targetPath: USER_GET_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
 
     /**
-     * 组列表查询接口
+     * 获取用户人脸列表接口
      *
+     * @param {string} userId - 用户id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} groupId - 用户组id（由数字、字母、下划线组成），长度限制128B
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   start 默认值0，起始序号
-     *   num 返回数量，默认值100，最大值1000
      * @return {Promise} - 标准Promise对象
      */
-    getGrouplist(options) {
+    faceGetlist(userId, groupId, options) {
         let param = {
-            targetPath: GROUP_GETLIST_PATH
+            user_id: userId,
+            group_id: groupId,
+            targetPath: FACE_GETLIST_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
 
     /**
-     * 组内用户列表查询接口
+     * 获取用户列表接口
      *
      * @param {string} groupId - 用户组id（由数字、字母、下划线组成），长度限制128B
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
      *   start 默认值0，起始序号
-     *   num 返回数量，默认值100，最大值1000
+     *   length 返回数量，默认值100，最大值1000
      * @return {Promise} - 标准Promise对象
      */
     getGroupUsers(groupId, options) {
@@ -282,39 +238,85 @@ class AipFace extends BaseClient {
     }
 
     /**
-     * 组间复制用户接口
+     * 复制用户接口
      *
-     * @param {string} srcGroupId - 从指定group里复制信息
-     * @param {string} groupId - 用户组id，标识一组用户（由数字、字母、下划线组成），长度限制128B。如果需要将一个uid注册到多个group下，group\_id需要用多个逗号分隔，每个group_id长度限制为48个英文字符。**注：group无需单独创建，注册用户时则会自动创建group。**<br>**产品建议**：根据您的业务需求，可以将需要注册的用户，按照业务划分，分配到不同的group下，例如按照会员手机尾号作为groupid，用于刷脸支付、会员计费消费等，这样可以尽可能控制每个group下的用户数与人脸数，提升检索的准确率
-     * @param {string} uid - 用户id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} userId - 用户id（由数字、字母、下划线组成），长度限制128B
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
+     *   src_group_id 从指定组里复制信息
+     *   dst_group_id 需要添加用户的组id
      * @return {Promise} - 标准Promise对象
      */
-    addGroupUsers(srcGroupId, groupId, uid, options) {
+    userCopy(userId, options) {
         let param = {
-            src_group_id: srcGroupId,
-            group_id: groupId,
-            uid: uid,
-            targetPath: GROUP_ADDUSER_PATH
+            user_id: userId,
+            targetPath: USER_COPY_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
 
     /**
-     * 组内删除用户接口
+     * 删除用户接口
      *
-     * @param {string} groupId - 用户组id，标识一组用户（由数字、字母、下划线组成），长度限制128B。如果需要将一个uid注册到多个group下，group\_id需要用多个逗号分隔，每个group_id长度限制为48个英文字符。**注：group无需单独创建，注册用户时则会自动创建group。**<br>**产品建议**：根据您的业务需求，可以将需要注册的用户，按照业务划分，分配到不同的group下，例如按照会员手机尾号作为groupid，用于刷脸支付、会员计费消费等，这样可以尽可能控制每个group下的用户数与人脸数，提升检索的准确率
-     * @param {string} uid - 用户id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} groupId - 用户组id（由数字、字母、下划线组成），长度限制128B
+     * @param {string} userId - 用户id（由数字、字母、下划线组成），长度限制128B
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
      * @return {Promise} - 标准Promise对象
      */
-    deleteGroupUsers(groupId, uid, options) {
+    deleteUser(groupId, userId, options) {
         let param = {
             group_id: groupId,
-            uid: uid,
-            targetPath: GROUP_DELETEUSER_PATH
+            user_id: userId,
+            targetPath: USER_DELETE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 创建用户组接口
+     *
+     * @param {string} groupId - 用户组id（由数字、字母、下划线组成），长度限制128B
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    groupAdd(groupId, options) {
+        let param = {
+            group_id: groupId,
+            targetPath: GROUP_ADD_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 删除用户组接口
+     *
+     * @param {string} groupId - 用户组id（由数字、字母、下划线组成），长度限制128B
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    groupDelete(groupId, options) {
+        let param = {
+            group_id: groupId,
+            targetPath: GROUP_DELETE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 组列表查询接口
+     *
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   start 默认值0，起始序号
+     *   length 返回数量，默认值100，最大值1000
+     * @return {Promise} - 标准Promise对象
+     */
+    getGrouplist(options) {
+        let param = {
+            targetPath: GROUP_GETLIST_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
@@ -322,21 +324,20 @@ class AipFace extends BaseClient {
     /**
      * 身份验证接口
      *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {string} idCardNumber - 身份证号（真实身份证号号码）。我们的服务端会做格式校验，并通过错误码返回，但是为了您的产品反馈体验更及时，建议在产品前端做一下号码格式校验与反馈
+     * @param {string} image - 图片信息(**总数据大小应小于10M**)，图片上传方式根据image_type来判断
+     * @param {string} imageType - 图片类型 **BASE64**:图片的base64值，base64编码后的图片数据，需urlencode，编码后的图片大小不超过2M；**URL**:图片的 URL地址( 可能由于网络等原因导致下载图片时间过长)**；FACE_TOKEN**: 人脸图片的唯一标识，调用人脸检测接口时，会为每个人脸图片赋予一个唯一的FACE_TOKEN，同一张图片多次检测得到的FACE_TOKEN是同一个
+     * @param {string} idCardNumber - 身份证号（真实身份证号号码）
      * @param {string} name - utf8，姓名（真实姓名，和身份证号匹配）
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   quality 判断图片中的人脸质量是否符合条件。use表示需要做质量控制，质量不符合条件的照片会被直接拒绝
-     *   quality_conf 人脸质量检测中每一项指标的具体阈值设定，json串形式，当指定quality:use时生效
-     *   faceliveness 判断活体值是否达标。use表示需要做活体检测，低于活体阈值的照片会直接拒绝
-     *   faceliveness_conf 人脸活体检测的阈值设定，json串形式，当指定faceliveness:use时生效。默认使用的阈值如下：{faceliveness：0.834963}
-     *   ext_fields 可选项为faceliveness，qualities。选择具体的项，则返回参数中将会显示相应的扩展字段。如faceliveness表示返回结果中包含活体相关内容，qualities表示返回结果中包含质量检测相关内容
+     *   quality_control 图片质量控制  **NONE**: 不进行控制 **LOW**:较低的质量要求 **NORMAL**: 一般的质量要求 **HIGH**: 较高的质量要求 **默认 NONE**
+     *   liveness_control 活体检测控制  **NONE**: 不进行控制 **LOW**:较低的活体要求(高通过率 低攻击拒绝率) **NORMAL**: 一般的活体要求(平衡的攻击拒绝率, 通过率) **HIGH**: 较高的活体要求(高攻击拒绝率 低通过率) **默认NONE**
      * @return {Promise} - 标准Promise对象
      */
-    personVerify(image, idCardNumber, name, options) {
+    personVerify(image, imageType, idCardNumber, name, options) {
         let param = {
             image: image,
+            image_type: imageType,
             id_card_number: idCardNumber,
             name: name,
             targetPath: PERSON_VERIFY_PATH
@@ -345,21 +346,97 @@ class AipFace extends BaseClient {
     }
 
     /**
-     * 在线活体检测接口
+     * 语音校验码接口接口
      *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   max_face_num 最多处理人脸数目，默认值1
-     *   face_fields 如不选择此项，返回结果默认只有人脸框、概率和旋转角度。可选参数为qualities、faceliveness。qualities：图片质量相关判断；faceliveness：活体判断。如果两个参数都需要选择，请使用半角逗号分隔。
+     *   appid 百度云创建应用时的唯一标识ID
      * @return {Promise} - 标准Promise对象
      */
-    faceverify(image, options) {
+    videoSessioncode(options) {
         let param = {
-            image: image,
-            targetPath: FACEVERIFY_PATH
+            targetPath: VIDEO_SESSIONCODE_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 视频活体检测接口接口
+     *
+     * @param {string} sessionId - 语音校验码会话id，使用此接口的前提是已经调用了语音校验码接口
+     * @param {string} videoBase64 - base64编码后的视频数据（视频限制：最佳为上传5-15s的mp4文件。视频编码方式：h264编码；音频编码格式：aac，pcm均可。）
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    videoFaceliveness(sessionId, videoBase64, options) {
+        let param = {
+            session_id: sessionId,
+            video_base64: videoBase64,
+            targetPath: VIDEO_FACELIVENESS_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+    /**
+     * 在线活体检测
+     *
+     * @param {Object} param - 参数对象数组
+     * @return {Promise} - 标准Promise对象
+     * > 说明：两张图片的对象举例：
+     * >
+     * > [
+     * >     {
+     * >         "image": "sfasq35sadvsvqwr5q...",
+     * >         "image_type": "BASE64",
+     * >         "face_field": "quality"
+     * >     },
+     * >     {
+     * >         "image": "sfasq35sadvsvqwr5q...",
+     * >         "image_type": "BASE64",
+     * >         "face_field": "quality"
+     * >     }
+     * > ]
+     */
+    faceverify(object) {
+        const FACEVERIFY_PATH = '/rest/2.0/face/v3/faceverify';
+        const HttpClientExt = require('./http/httpClientExt');
+        let httpClientJson = new HttpClientExt();
+        let requestInfo = new RequestInfo(FACEVERIFY_PATH,
+            object, METHOD_POST);
+        return this.doRequest(requestInfo, httpClientJson);
+    }
+
+    /**
+     * 人脸比对接口
+     *
+     * @param {Object} param - 参数对象数组
+     * @return {Promise} - 标准Promise对象
+     * > 说明：两张图片的对象举例：
+     * >
+     * > [
+     * >     {
+     * >         "image": "sfasq35sadvsvqwr5q...",
+     * >         "image_type": "BASE64",
+     * >         "face_type": "LIVE",
+     * >         "quality_control": "LOW",
+     * >         "liveness_control": "HIGH"
+     * >     },
+     * >     {
+     * >         "image": "sfasq35sadvsvqwr5q...",
+     * >         "image_type": "BASE64",
+     * >         "face_type": "IDCARD",
+     * >         "quality_control": "LOW",
+     * >         "liveness_control": "HIGH"
+     * >     }
+     * > ]
+     */
+    match(object) {
+        const MATCH_PATH = '/rest/2.0/face/v3/match';
+        const HttpClientExt = require('./http/httpClientExt');
+        let httpClientJson = new HttpClientExt();
+        let requestInfo = new RequestInfo(MATCH_PATH,
+            object, METHOD_POST);
+        return this.doRequest(requestInfo, httpClientJson);
     }
 }
 
