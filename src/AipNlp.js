@@ -36,6 +36,8 @@ const COMMENT_TAG_PATH = '/rpc/2.0/nlp/v2/comment_tag';
 const SENTIMENT_CLASSIFY_PATH = '/rpc/2.0/nlp/v1/sentiment_classify';
 const KEYWORD_PATH = '/rpc/2.0/nlp/v1/keyword';
 const TOPIC_PATH = '/rpc/2.0/nlp/v1/topic';
+const ECNET_PATH = '/rpc/2.0/nlp/v1/ecnet';
+const EMOTION_PATH = '/rpc/2.0/nlp/v1/emotion';
 
 
 /**
@@ -245,6 +247,39 @@ class AipNlp extends BaseClient {
             title: title,
             content: content,
             targetPath: TOPIC_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 文本纠错接口
+     *
+     * @param {string} text - 待纠错文本，输入限制511字节
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    ecnet(text, options) {
+        let param = {
+            text: text,
+            targetPath: ECNET_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 对话情绪识别接口接口
+     *
+     * @param {string} text - 待识别情感文本，输入限制512字节
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   scene default（默认项-不区分场景），talk（闲聊对话-如度秘聊天等），task（任务型对话-如导航对话等），customer_service（客服对话-如电信/银行客服等）
+     * @return {Promise} - 标准Promise对象
+     */
+    emotion(text, options) {
+        let param = {
+            text: text,
+            targetPath: EMOTION_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }

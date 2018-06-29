@@ -6,6 +6,7 @@ let exp = require('../');
 
 let services = [
     'contentCensor',
+    'bodyanalysis',
     'imageSearch',
     'imageClassify',
     'face',

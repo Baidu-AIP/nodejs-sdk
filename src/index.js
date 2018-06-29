@@ -17,6 +17,7 @@
 
 
 module.exports = {
+    bodyanalysis: require('./AipBodyAnalysis'),
     imageSearch: require('./AipImageSearch'),
     imageClassify: require('./AipImageClassify'),
     contentCensor: require('./AipContentCensor'),

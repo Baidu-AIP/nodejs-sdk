@@ -5,6 +5,7 @@ let should = require('should');
 let services = [
     'contentCensor',
     'imageSearch',
+    'bodyanalysis',
     'imageClassify',
     'face',
     'ocr',
