@@ -1,0 +1,42 @@
+'use strict';
+/**
+ * Copyright (c) 2017 Baidu.com, Inc. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ * @file cloudAuth
+ * @author baiduAip
+ */
+const BceAuth = require("./bceAuth/auth");
+/**
+* CloudAuth类
+*
+* 百度云鉴权签名类，依赖百度云签名实现(bceAuth目录)
+* @see https://github.com/baidubce/bce-sdk-js
+* @see http://gollum.baidu.com/AuthenticationMechanism#生成CanonicalQueryString
+* @constructor
+* @param {string} ak The access key.
+* @param {string} sk The security key.
+*/
+class CloudAuth {
+    constructor(ak, sk) {
+        this.ak = ak;
+        this.sk = sk;
+        this.authProxy = new BceAuth(ak, sk);
+    }
+    getAuthorization(method, uri, params, headers, time) {
+        return this.authProxy.generateAuthorization(method, uri, params, headers, time / 1000);
+    }
+}
+exports.default = CloudAuth;
+// @ts-ignore
+Object.assign(CloudAuth, exports);
+module.exports = CloudAuth;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2xvdWRBdXRoLmpzIiwic291cmNlUm9vdCI6Ii4vIiwic291cmNlcyI6WyJzcmMvYXV0aC9jbG91ZEF1dGgudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsWUFBWSxDQUFDO0FBQ2I7Ozs7Ozs7Ozs7Ozs7O0dBY0c7QUFDSCwwQ0FBMkM7QUFFMUM7Ozs7Ozs7OztFQVNFO0FBQ0gsTUFBTSxTQUFTO0lBTVgsWUFBWSxFQUFVLEVBQUUsRUFBVTtRQUM5QixJQUFJLENBQUMsRUFBRSxHQUFHLEVBQUUsQ0FBQztRQUNiLElBQUksQ0FBQyxFQUFFLEdBQUcsRUFBRSxDQUFDO1FBQ2IsSUFBSSxDQUFDLFNBQVMsR0FBRyxJQUFJLE9BQU8sQ0FBQyxFQUFFLEVBQUUsRUFBRSxDQUFDLENBQUM7SUFDekMsQ0FBQztJQUNELGdCQUFnQixDQUFDLE1BQU0sRUFBRSxHQUFHLEVBQUUsTUFBTSxFQUFFLE9BQU8sRUFBRSxJQUFJO1FBQy9DLE9BQU8sSUFBSSxDQUFDLFNBQVMsQ0FBQyxxQkFBcUIsQ0FBQyxNQUFNLEVBQUUsR0FBRyxFQUFFLE1BQU0sRUFBRSxPQUFPLEVBQUUsSUFBSSxHQUFHLElBQUksQ0FBQyxDQUFDO0lBQzNGLENBQUM7Q0FDSDtBQUVGLGtCQUFlLFNBQVMsQ0FBQztBQUN6QixhQUFhO0FBQ2IsTUFBTSxDQUFDLE1BQU0sQ0FBQyxTQUFTLEVBQUUsT0FBTyxDQUFDLENBQUM7QUFFbEMsaUJBQVMsU0FBUyxDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiJ3VzZSBzdHJpY3QnO1xuLyoqXG4gKiBDb3B5cmlnaHQgKGMpIDIwMTcgQmFpZHUuY29tLCBJbmMuIEFsbCBSaWdodHMgUmVzZXJ2ZWRcbiAqXG4gKiBMaWNlbnNlZCB1bmRlciB0aGUgQXBhY2hlIExpY2Vuc2UsIFZlcnNpb24gMi4wICh0aGUgXCJMaWNlbnNlXCIpOyB5b3UgbWF5IG5vdCB1c2UgdGhpcyBmaWxlIGV4Y2VwdCBpbiBjb21wbGlhbmNlIHdpdGhcbiAqIHRoZSBMaWNlbnNlLiBZb3UgbWF5IG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXRcbiAqXG4gKiBodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjBcbiAqXG4gKiBVbmxlc3MgcmVxdWlyZWQgYnkgYXBwbGljYWJsZSBsYXcgb3IgYWdyZWVkIHRvIGluIHdyaXRpbmcsIHNvZnR3YXJlIGRpc3RyaWJ1dGVkIHVuZGVyIHRoZSBMaWNlbnNlIGlzIGRpc3RyaWJ1dGVkIG9uXG4gKiBhbiBcIkFTIElTXCIgQkFTSVMsIFdJVEhPVVQgV0FSUkFOVElFUyBPUiBDT05ESVRJT05TIE9GIEFOWSBLSU5ELCBlaXRoZXIgZXhwcmVzcyBvciBpbXBsaWVkLiBTZWUgdGhlIExpY2Vuc2UgZm9yIHRoZVxuICogc3BlY2lmaWMgbGFuZ3VhZ2UgZ292ZXJuaW5nIHBlcm1pc3Npb25zIGFuZCBsaW1pdGF0aW9ucyB1bmRlciB0aGUgTGljZW5zZS5cbiAqXG4gKiBAZmlsZSBjbG91ZEF1dGhcbiAqIEBhdXRob3IgYmFpZHVBaXBcbiAqL1xuaW1wb3J0IEJjZUF1dGggPSByZXF1aXJlKCcuL2JjZUF1dGgvYXV0aCcpO1xuXG4gLyoqXG4gKiBDbG91ZEF1dGjnsbtcbiAqXG4gKiDnmb7luqbkupHpibTmnYPnrb7lkI3nsbvvvIzkvp3otZbnmb7luqbkupHnrb7lkI3lrp7njrAoYmNlQXV0aOebruW9lSlcbiAqIEBzZWUgaHR0cHM6Ly9naXRodWIuY29tL2JhaWR1YmNlL2JjZS1zZGstanNcbiAqIEBzZWUgaHR0cDovL2dvbGx1bS5iYWlkdS5jb20vQXV0aGVudGljYXRpb25NZWNoYW5pc20j55Sf5oiQQ2Fub25pY2FsUXVlcnlTdHJpbmdcbiAqIEBjb25zdHJ1Y3RvclxuICogQHBhcmFtIHtzdHJpbmd9IGFrIFRoZSBhY2Nlc3Mga2V5LlxuICogQHBhcmFtIHtzdHJpbmd9IHNrIFRoZSBzZWN1cml0eSBrZXkuXG4gKi9cbmNsYXNzIENsb3VkQXV0aCB7XG4gICAgIGFrOiBzdHJpbmc7XG4gICAgIHNrOiBzdHJpbmc7XG5cbiAgICAgYXV0aFByb3h5OiBCY2VBdXRoO1xuXG4gICAgY29uc3RydWN0b3IoYWs6IHN0cmluZywgc2s6IHN0cmluZykge1xuICAgICAgICB0aGlzLmFrID0gYWs7XG4gICAgICAgIHRoaXMuc2sgPSBzaztcbiAgICAgICAgdGhpcy5hdXRoUHJveHkgPSBuZXcgQmNlQXV0aChhaywgc2spO1xuICAgIH1cbiAgICBnZXRBdXRob3JpemF0aW9uKG1ldGhvZCwgdXJpLCBwYXJhbXMsIGhlYWRlcnMsIHRpbWUpIHtcbiAgICAgICAgcmV0dXJuIHRoaXMuYXV0aFByb3h5LmdlbmVyYXRlQXV0aG9yaXphdGlvbihtZXRob2QsIHVyaSwgcGFyYW1zLCBoZWFkZXJzLCB0aW1lIC8gMTAwMCk7XG4gICAgfVxuIH1cblxuZXhwb3J0IGRlZmF1bHQgQ2xvdWRBdXRoO1xuLy8gQHRzLWlnbm9yZVxuT2JqZWN0LmFzc2lnbihDbG91ZEF1dGgsIGV4cG9ydHMpO1xuLy8gQHRzLWlnbm9yZVxuZXhwb3J0ID0gQ2xvdWRBdXRoO1xuIl19
