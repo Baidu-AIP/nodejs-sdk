@@ -14,11 +14,11 @@
  * @file http头常量
  * @author baiduAip
  */
-const httpHeader = {
+const HttpHeader = {
     BCE_DATE: 'x-bce-date',
     HOST: 'Host',
     BCE_AUTHORIZATION: 'authorization',
     CONTENT_TYPE: 'Content-Type'
 };
 
-module.exports = Object.freeze(httpHeader);
+export = Object.freeze(HttpHeader);

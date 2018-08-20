@@ -14,17 +14,17 @@
  * @file AipImageCensor
  * @author baiduAip
  */
-const BaseClient = require('./client/baseClient');
+import BaseClient = require('./client/baseClient');
 
-const RequestInfo = require('./client/requestInfo');
+import RequestInfo = require('./client/requestInfo');
 
-const objectTools = require('./util/objectTools');
+import objectTools = require('./util/objectTools');
 
-const HttpClient = require('./http/httpClient');
+import HttpClient = require('./http/httpClient');
 
-const HttpClientJson = require('./http/httpClientExt');
+import HttpClientJson = require('./http/httpClientExt');
 
-const httpHeader = require('./const/httpHeader');
+import httpHeader = require('./const/httpHeader');
 
 const CONTENT_TYPE_JSON = 'application/json';
 
@@ -159,4 +159,8 @@ class AipImageCensor extends BaseClient {
     }
 }
 
-module.exports = AipImageCensor;
+export default AipImageCensor
+// @ts-ignore
+Object.assign(AipImageCensor, exports);
+// @ts-ignore
+export = AipImageCensor;

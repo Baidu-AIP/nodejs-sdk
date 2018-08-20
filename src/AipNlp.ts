@@ -15,13 +15,13 @@
  * @author baidu aip
  */
 
-const BaseClient = require('./client/baseClient');
+import BaseClient = require('./client/baseClient');
 
-const RequestInfo = require('./client/requestInfo');
+import RequestInfo = require('./client/requestInfo');
 
-const HttpClient = require('./http/httpClientNlp');
+import HttpClient = require('./http/httpClientNlp');
 
-const objectTools = require('./util/objectTools');
+import objectTools = require('./util/objectTools');
 
 const METHOD_POST = 'POST';
 
@@ -285,5 +285,11 @@ class AipNlp extends BaseClient {
     }
 }
 
-module.exports = AipNlp;
+export default AipNlp
+
+// @ts-ignore
+Object.assign(AipNlp, exports);
+// @ts-ignore
+
+export = AipNlp;
 

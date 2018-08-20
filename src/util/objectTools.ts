@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * Copyright (c) 2017 Baidu.com, Inc. All Rights Reserved
  *
@@ -15,33 +16,47 @@
  * @author baiduAip
  */
 
-let mergeTool = {
-    merge: function (source, dest) {
-        let merged = {};
-        for (let p in dest) {
-            merged[p] = dest[p];
-        }
-        for (let p in source) {
-            merged[p] = source[p];
-        }
-        return merged;
-    },
-    ensureArray: function (arrayLike) {
-        if (this.isArray(arrayLike)) {
-            return arrayLike;
-        } else {
-            return [arrayLike];
-        }
-    },
-    isArray: function (obj) {
-        return '[object Array]' === Object.prototype.toString.call(obj);
-    },
-    isObject: function (obj) {
-        return '[object Object]' === Object.prototype.toString.call(obj);
-    },
-    isFunction: function (obj) {
-        return '[object Function]' === Object.prototype.toString.call(obj);
-    }
-};
+export function merge<T1, T2>(source: T1, dest: T2): T1 & T2
+{
+	let merged = {} as any;
+	for (let p in dest)
+	{
+		merged[p] = dest[p];
+	}
+	for (let p in source)
+	{
+		merged[p] = source[p];
+	}
+	// @ts-ignore
+	return merged;
+}
 
-module.exports = mergeTool;
+export function ensureArray<T>(arrayLike: T)
+{
+	if (isArray(arrayLike))
+	{
+		return arrayLike;
+	}
+	else
+	{
+		return [arrayLike];
+	}
+}
+
+export function isArray<T>(obj: T)
+{
+	return '[object Array]' === Object.prototype.toString.call(obj);
+}
+
+export function isObject<T>(obj: T)
+{
+	return '[object Object]' === Object.prototype.toString.call(obj);
+}
+
+export function isFunction<T>(obj: T)
+{
+	return '[object Function]' === Object.prototype.toString.call(obj);
+}
+
+import * as objectTools from './objectTools'
+export default objectTools;

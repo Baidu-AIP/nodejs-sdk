@@ -15,8 +15,8 @@
  * @author baiduAip
  */
 
-const HttpClient = require('./httpClient');
-const crypto = require('crypto');
+import HttpClient = require('./httpClient');
+import crypto = require('crypto');
 
 /**
  * HttpClientVoice类
@@ -63,4 +63,8 @@ class HttpClientVoiceASR extends HttpClient {
     }
 }
 
-module.exports = HttpClientVoiceASR;
+export default HttpClientVoiceASR
+// @ts-ignore
+Object.assign(HttpClientVoiceASR, exports);
+// @ts-ignore
+export = HttpClientVoiceASR;

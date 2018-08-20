@@ -13,13 +13,14 @@
     "url": "https://github.com/Baidu-AIP/nodejs-sdk.git"
   },
   "dependencies": {
+    "@types/request": "^2.47.1",
     "debug": "^2.6.0",
     "iconv-lite": "^0.4.15",
     "request": "^2.79.0",
     "underscore": "^1.8.3"
   },
   "optionalDependencies": {
-    "should": "^13.2.0",
-    "mocha": "^4.0.1"
+    "mocha": "^4.0.1",
+    "should": "^13.2.0"
   }
 }

@@ -15,16 +15,30 @@
  * @author baiduAip
  */
 
+import bodyanalysis = require('./AipBodyAnalysis');
+import imageSearch = require('./AipImageSearch');
+import imageClassify = require('./AipImageClassify');
+import contentCensor = require('./AipContentCensor');
+import face = require('./AipFace');
+import ocr = require('./AipOcr');
+import nlp = require('./AipNlp');
+import kg = require('./AipKg');
+import speech = require('./AipSpeech');
+import HttpClient = require('./http/httpClient');
 
-module.exports = {
-    bodyanalysis: require('./AipBodyAnalysis'),
-    imageSearch: require('./AipImageSearch'),
-    imageClassify: require('./AipImageClassify'),
-    contentCensor: require('./AipContentCensor'),
-    face: require('./AipFace'),
-    ocr: require('./AipOcr'),
-    nlp: require('./AipNlp'),
-    kg: require('./AipKg'),
-    speech: require('./AipSpeech'),
-    HttpClient: require('./http/httpClient')
-};
+export {
+	bodyanalysis,
+	imageSearch,
+	imageClassify,
+	contentCensor,
+	face,
+	ocr,
+    nlp,
+    kg,
+    speech,
+    HttpClient,
+}
+
+import * as BaiduAipSdk from './index';
+export { BaiduAipSdk };
+export default BaiduAipSdk;

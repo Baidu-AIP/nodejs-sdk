@@ -21,4 +21,4 @@ const code = {
     BASE64: 'base64'
 };
 
-module.exports = Object.freeze(code);
+export = Object.freeze(code);

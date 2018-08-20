@@ -14,9 +14,11 @@
  * @file requestInfo
  * @author baiduAip
  */
-const HttpHeader = require('../const/httpHeader');
+import HttpHeader = require('../const/httpHeader');
 
-const CloudAuth = require('../auth/cloudAuth');
+import CloudAuth = require('../auth/cloudAuth');
+import {Headers} from "request";
+import DevAuthToken = require('../auth/devAuthToken');
 
 const HOST_DEFAULT = 'aip.baidubce.com';
 
@@ -34,14 +36,29 @@ const SYMBOL_HTTP_PREFIX = 'http://';
  *
  * @constructor
  */
-class RequestInfo {
-    constructor(path, params, method, isHttp, headers) {
+class RequestInfo<H extends Headers = Headers> {
+
+     isHttp: boolean;
+     method: string;
+     host: string | typeof HOST_DEFAULT;
+     path;
+     params;
+     createDate: Date;
+     mergeHeaders: H;
+     devAccessToken: DevAuthToken;
+
+     headers: H & Headers & {
+         [k in keyof typeof HttpHeader]?: any
+     };
+
+    constructor(path, params, method: string, isHttp?: boolean, headers?: H) {
         this.isHttp = isHttp || false;
         this.method = method;
         this.host = HOST_DEFAULT;
         this.path = path;
         this.params = params;
         this.createDate = new Date();
+        // @ts-ignore
         this.mergeHeaders = headers || {};
         this.devAccessToken = null;
         this.initCommonHeader();
@@ -51,6 +68,7 @@ class RequestInfo {
         this.headers[HttpHeader.HOST] = this.host;
     }
     initCommonHeader() {
+        // @ts-ignore
         this.headers = {};
         this.headers[HttpHeader.HOST] = this.host;
         this.headers[HttpHeader.CONTENT_TYPE] = CONTENT_TYPE_FORMDEFAULT;
@@ -58,11 +76,11 @@ class RequestInfo {
             this.headers[p] = this.mergeHeaders[p];
         }
     }
-    makeDevOptions(devAccessToken) {
+    makeDevOptions(devAccessToken: DevAuthToken) {
         this.devAccessToken = devAccessToken;
         this.path += SYMBOL_QUERYSTRING_PREFIX + devAccessToken.token;
     }
-    makeBceOptions(ak, sk) {
+    makeBceOptions(ak: string, sk: string) {
         let cloudAuth = new CloudAuth(ak, sk);
         this.headers[HttpHeader.BCE_DATE] = this.getUTCDateStr();
         let signature = cloudAuth.getAuthorization(this.method,
@@ -94,6 +112,10 @@ class RequestInfo {
     getHttpUrl() {
         return SYMBOL_HTTP_PREFIX + this.host + this.path + SYMBOL_QUERYSTRING_PREFIX_BCE;
     }
- }
+}
 
-module.exports = RequestInfo;
+export default RequestInfo;
+// @ts-ignore
+Object.assign(RequestInfo, exports);
+// @ts-ignore
+export = RequestInfo;

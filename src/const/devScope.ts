@@ -16,4 +16,4 @@
  */
 const devScope = 'brain_all_scope';
 
-module.exports = devScope;
+export = devScope;

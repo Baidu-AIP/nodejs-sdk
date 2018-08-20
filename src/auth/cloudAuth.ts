@@ -14,7 +14,7 @@
  * @file cloudAuth
  * @author baiduAip
  */
-const BceAuth = require('./bceAuth/auth');
+import BceAuth = require('./bceAuth/auth');
 
  /**
  * CloudAuth类
@@ -27,7 +27,12 @@ const BceAuth = require('./bceAuth/auth');
  * @param {string} sk The security key.
  */
 class CloudAuth {
-    constructor(ak, sk) {
+     ak: string;
+     sk: string;
+
+     authProxy: BceAuth;
+
+    constructor(ak: string, sk: string) {
         this.ak = ak;
         this.sk = sk;
         this.authProxy = new BceAuth(ak, sk);
@@ -37,4 +42,8 @@ class CloudAuth {
     }
  }
 
-module.exports = CloudAuth;
+export default CloudAuth;
+// @ts-ignore
+Object.assign(CloudAuth, exports);
+// @ts-ignore
+export = CloudAuth;

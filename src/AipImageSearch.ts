@@ -15,13 +15,13 @@
  * @author baidu aip
  */
 
-const BaseClient = require('./client/baseClient');
+import BaseClient = require('./client/baseClient');
 
-const RequestInfo = require('./client/requestInfo');
+import RequestInfo = require('./client/requestInfo');
 
-const HttpClient = require('./http/httpClient');
+import HttpClient = require('./http/httpClient');
 
-const objectTools = require('./util/objectTools');
+import objectTools = require('./util/objectTools');
 
 const METHOD_POST = 'POST';
 
@@ -271,5 +271,8 @@ class AipImageSearch extends BaseClient {
     }
 }
 
-module.exports = AipImageSearch;
-
+export default AipImageSearch
+// @ts-ignore
+Object.assign(AipImageSearch, exports);
+// @ts-ignore
+export = AipImageSearch;

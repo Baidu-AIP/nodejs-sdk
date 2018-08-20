@@ -15,13 +15,13 @@
  * @author baidu aip
  */
 
-const BaseClient = require('./client/baseClient');
+import BaseClient = require('./client/baseClient');
 
-const RequestInfo = require('./client/requestInfo');
+import RequestInfo = require('./client/requestInfo');
 
-const HttpClient = require('./http/httpClient');
+import HttpClient = require('./http/httpClient');
 
-const objectTools = require('./util/objectTools');
+import objectTools = require('./util/objectTools');
 
 const METHOD_POST = 'POST';
 
@@ -105,5 +105,8 @@ class AipBodyAnalysis extends BaseClient {
     }
 }
 
-module.exports = AipBodyAnalysis;
-
+export default AipBodyAnalysis
+// @ts-ignore
+Object.assign(AipBodyAnalysis, exports);
+// @ts-ignore
+export = AipBodyAnalysis;

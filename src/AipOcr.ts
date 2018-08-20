@@ -15,13 +15,13 @@
  * @author baidu aip
  */
 
-const BaseClient = require('./client/baseClient');
+import BaseClient = require('./client/baseClient');
 
-const RequestInfo = require('./client/requestInfo');
+import RequestInfo = require('./client/requestInfo');
 
-const HttpClient = require('./http/httpClient');
+import HttpClient = require('./http/httpClient');
 
-const objectTools = require('./util/objectTools');
+import objectTools = require('./util/objectTools');
 
 const METHOD_POST = 'POST';
 
@@ -50,7 +50,6 @@ const BUSINESS_CARD_PATH = '/rest/2.0/ocr/v1/business_card';
 const HANDWRITING_PATH = '/rest/2.0/ocr/v1/handwriting';
 const CUSTOM_PATH = '/rest/2.0/solution/v1/iocr/recognise';
 
-
 /**
  * AipOcr类
  *
@@ -61,12 +60,9 @@ const CUSTOM_PATH = '/rest/2.0/solution/v1/iocr/recognise';
  * @param {string} ak  access key.
  * @param {string} sk  security key.
  */
-class AipOcr extends BaseClient {
-    constructor(appId, ak, sk) {
-        super(appId, ak, sk);
-    }
-    commonImpl(param) {
-        let httpClient = new HttpClient();
+export class AipOcr extends BaseClient {
+    commonImpl<T = AipOcr.IAipOcrReturn>(param) {
+        let httpClient = new HttpClient<T>();
         let apiUrl = param.targetPath;
         delete param.targetPath;
         let requestInfo = new RequestInfo(apiUrl,
@@ -124,12 +120,26 @@ class AipOcr extends BaseClient {
      *   probability 是否返回识别结果中每一行的置信度
      * @return {Promise} - 标准Promise对象
      */
-    accurateBasic(image, options) {
+    accurateBasic(image, options?: AipOcr.IAipOcrOptionsAccurateBasic) {
         let param = {
             image: image,
             targetPath: ACCURATE_BASIC_PATH
         };
-        return this.commonImpl(objectTools.merge(param, options));
+        return this.commonImpl<{
+            log_id: number,
+
+            direction?: number,
+
+            words_result_num: number,
+            words_result: {
+                words: string,
+                probability?: {
+                    variance: number,
+                    average: number,
+                    min: number,
+                }
+            }[],
+        }>(objectTools.merge(param, options));
     }
 
     /**
@@ -420,7 +430,7 @@ class AipOcr extends BaseClient {
      * @description options - options列表:
      * @return {Promise} - 标准Promise对象
      */
-    tableBegin(image, options) {
+    tableBegin(image, options?) {
         let param = {
             image: image,
             targetPath: TABLE_RECOGNIZE_PATH
@@ -608,6 +618,45 @@ class AipOcr extends BaseClient {
     }
 }
 
-module.exports = AipOcr;
+export namespace AipOcr
+{
+    export interface IAipOcrReturnResultTable {
+        [i: number]: {
+            request_id?
+        },
+        ret_code?
+    }
 
+    export interface IAipOcrReturn {
+        [k: string]: any;
 
+        error_code?
+        result?: any | IAipOcrReturnResultTable;
+
+        log_id: number,
+    }
+
+    export interface IAipOcrOptions {
+        [k: string]: any;
+    }
+
+    export type IBoolean = boolean | 'true' | 'false';
+
+    export type IAipOcrOptionsAccurateBasic = {
+        /**
+         * detect_direction 是否检测图像朝向，默认不检测，即：false。朝向是指输入图像是正常方向、逆时针旋转90/180/270度。可选值包括:<br>- true：检测朝向；<br>- false：不检测朝向。
+         */
+        detect_direction?: IBoolean,
+        /**
+         * probability 是否返回识别结果中每一行的置信度
+         */
+        probability?: IBoolean,
+    } & IAipOcrOptions
+}
+
+export default AipOcr
+
+// @ts-ignore
+Object.assign(AipOcr, exports);
+// @ts-ignore
+export = AipOcr;

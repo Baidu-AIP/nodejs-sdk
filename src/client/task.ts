@@ -15,14 +15,33 @@
  * @author baiduAip
  */
 
+interface ITaskPromise<R, P>
+{
+    getResolveCb(): (value?: R) => P;
+    getRejectCb(): (err?) => any;
+    getCatchCb(): (err?) => any;
+    resolve(...argv): (...argv) => any;
+}
+
+interface ITaskFn<R, M, T>
+{
+    (this: T, param: M): Promise<R>
+}
+
  /**
  * task类
  * 描述调用接口任务
  *
  * @constructor
  */
-class Task {
-    constructor(fn, param, promise, clientContext) {
+class Task<R, T, M, P> {
+
+    fn: ITaskFn<R, M, T>;
+    param: M;
+    promise: ITaskPromise<R, P>;
+    clientContext: T;
+
+    constructor(fn: ITaskFn<R, M, T>, param: M, promise: ITaskPromise<R, P>, clientContext: T) {
         this.fn = fn;
         this.param = param;
         this.promise = promise;
@@ -40,6 +59,13 @@ class Task {
     }
 }
 
-Task.EVENT_DATA = 'data';
+namespace Task
+{
+    export const EVENT_DATA = 'data';
+}
 
-module.exports = Task;
+export default Task;
+// @ts-ignore
+Object.assign(Task, exports);
+// @ts-ignore
+export = Task;

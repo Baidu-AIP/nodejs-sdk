@@ -15,10 +15,11 @@
  * @author baiduAip
  */
 
-const HttpClient = require('./httpClient');
-const code = require('../const/code');
-const HttpHeader = require('../const/httpHeader');
+import HttpClient = require('./httpClient');
+import code = require('../const/code');
+import HttpHeader = require('../const/httpHeader');
 const CONTENT_TYPE_JSON = 'application/json';
+import RequestInfo = require('../client/requestInfo');
 
 /**
  * HttpClientExt类
@@ -28,11 +29,8 @@ const CONTENT_TYPE_JSON = 'application/json';
  * @extends HttpClient
  * @constructor
  */
-class HttpClientExt extends HttpClient {
-    constructor() {
-        super();
-    }
-    postWithInfo(requestInfo) {
+class HttpClientExt<T> extends HttpClient<T> {
+    postWithInfo(requestInfo: RequestInfo) {
         let body = this.createBody(requestInfo.params);
         let options = {
             method: requestInfo.method,
@@ -50,5 +48,8 @@ class HttpClientExt extends HttpClient {
     }
 }
 
-
-module.exports = HttpClientExt;
+export default HttpClientExt;
+// @ts-ignore
+Object.assign(HttpClientExt, exports);
+// @ts-ignore
+export = HttpClientExt;

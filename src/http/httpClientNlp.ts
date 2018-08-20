@@ -14,11 +14,11 @@
  * @file httpClientNlp类
  * @author baiduAip
  */
-const iconv = require('iconv-lite');
-const HttpClient = require('./httpClient');
-const objectTools = require('../util/objectTools');
-const request = require('request');
-const code = require('../const/code');
+import iconv = require('iconv-lite');
+import HttpClient = require('./httpClient');
+import objectTools = require('../util/objectTools');
+import request = require('request');
+import code = require('../const/code');
 
 /**
  * HttpClientNlp类
@@ -78,4 +78,8 @@ class HttpClientNlp extends HttpClient {
     }
 }
 
-module.exports = HttpClientNlp;
+export default HttpClientNlp
+// @ts-ignore
+Object.assign(HttpClientNlp, exports);
+// @ts-ignore
+export = HttpClientNlp;

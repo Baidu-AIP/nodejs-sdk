@@ -14,19 +14,19 @@
  * @file AipSpeech
  * @author baiduAip
  */
-const BaseClient = require('./client/baseClient');
+import BaseClient = require('./client/baseClient');
 
-const RequestInfo = require('./client/requestInfo');
+import RequestInfo = require('./client/requestInfo');
 
-const objectTools = require('./util/objectTools');
+import objectTools = require('./util/objectTools');
 
-const HttpClientVoiceASR = require('./http/httpClientVoiceASR');
+import HttpClientVoiceASR = require('./http/httpClientVoiceASR');
 
-const HttpClientVoiceTTS = require('./http/httpClientVoiceTTS');
+import HttpClientVoiceTTS = require('./http/httpClientVoiceTTS');
 
-const code = require('./const/code');
+import code = require('./const/code');
 
-const httpHeader = require('./const/httpHeader');
+import httpHeader = require('./const/httpHeader');
 
 const METHOD_POST = 'POST';
 
@@ -106,4 +106,8 @@ class AipSpeech extends BaseClient {
 
 }
 
-module.exports = AipSpeech;
+export default AipSpeech
+// @ts-ignore
+Object.assign(AipSpeech, exports);
+// @ts-ignore
+export = AipSpeech;

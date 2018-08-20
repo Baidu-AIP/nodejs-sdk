@@ -14,7 +14,7 @@
  * @file devAuthToken
  * @author baiduAip
  */
-const devScope = require('../const/devScope');
+import devScope = require('../const/devScope');
 
 /**
  * 提前获取access_token的时间 默认24个小时
@@ -33,7 +33,14 @@ let DEFAULT_FETCH_AHEAD_DURATION = 24 * 60 * 60 * 1000;
  * @param {string} scope 权限
  */
 class DevAuthToken {
-    constructor(token, expireTime, scope) {
+
+    token: string;
+    expireTime: number;
+    scope: string;
+    authDate: Date;
+    hasScopeFlag: boolean;
+
+    constructor(token: string, expireTime: number, scope: string) {
         this.token = token;
         this.expireTime = expireTime;
         this.scope = scope;
@@ -54,12 +61,13 @@ class DevAuthToken {
             }
         }.bind(this));
     }
-    hasScope(scope) {
+    hasScope(scope?) {
         return this.hasScopeFlag;
     }
     isExpired() {
         let now = new Date();
         // 根据服务器返回的access_token过期时间，提前重新获取token
+        // @ts-ignore
         if (now.getTime(this.expireTime) -
             this.authDate.getTime() > this.expireTime * 1000 -
                 DEFAULT_FETCH_AHEAD_DURATION) {
@@ -69,13 +77,21 @@ class DevAuthToken {
     }
 }
 
-/**
- * 设置提前获取access_token的时间
- */
-DevAuthToken.setExpireAhead = function (duration) {
-    DEFAULT_FETCH_AHEAD_DURATION = duration;
+namespace DevAuthToken
+{
+    /**
+     * 设置提前获取access_token的时间
+     */
+    export function setExpireAhead(duration) {
+        DEFAULT_FETCH_AHEAD_DURATION = duration;
+    }
+
+    export const DEFAULT_EXPIRE_DURATION = 2592000 * 1000;
 }
 
-DevAuthToken.DEFAULT_EXPIRE_DURATION = 2592000 * 1000;
+export default DevAuthToken;
+// @ts-ignore
+Object.assign(DevAuthToken, exports);
+// @ts-ignore
 
-module.exports = DevAuthToken;
+export = DevAuthToken;

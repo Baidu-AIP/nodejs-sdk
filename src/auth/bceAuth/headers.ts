@@ -16,39 +16,39 @@
 
 /* eslint-env node */
 
-exports.CONTENT_TYPE = 'Content-Type';
-exports.CONTENT_LENGTH = 'Content-Length';
-exports.CONTENT_MD5 = 'Content-MD5';
-exports.CONTENT_ENCODING = 'Content-Encoding';
-exports.CONTENT_DISPOSITION = 'Content-Disposition';
-exports.ETAG = 'ETag';
-exports.CONNECTION = 'Connection';
-exports.HOST = 'Host';
-exports.USER_AGENT = 'User-Agent';
-exports.CACHE_CONTROL = 'Cache-Control';
-exports.EXPIRES = 'Expires';
+export const CONTENT_TYPE = 'Content-Type';
+export const CONTENT_LENGTH = 'Content-Length';
+export const CONTENT_MD5 = 'Content-MD5';
+export const CONTENT_ENCODING = 'Content-Encoding';
+export const CONTENT_DISPOSITION = 'Content-Disposition';
+export const ETAG = 'ETag';
+export const CONNECTION = 'Connection';
+export const HOST = 'Host';
+export const USER_AGENT = 'User-Agent';
+export const CACHE_CONTROL = 'Cache-Control';
+export const EXPIRES = 'Expires';
 
-exports.AUTHORIZATION = 'Authorization';
-exports.X_BCE_DATE = 'x-bce-date';
-exports.X_BCE_ACL = 'x-bce-acl';
-exports.X_BCE_REQUEST_ID = 'x-bce-request-id';
-exports.X_BCE_CONTENT_SHA256 = 'x-bce-content-sha256';
-exports.X_BCE_OBJECT_ACL = 'x-bce-object-acl';
-exports.X_BCE_OBJECT_GRANT_READ = 'x-bce-object-grant-read';
+export const AUTHORIZATION = 'Authorization';
+export const X_BCE_DATE = 'x-bce-date';
+export const X_BCE_ACL = 'x-bce-acl';
+export const X_BCE_REQUEST_ID = 'x-bce-request-id';
+export const X_BCE_CONTENT_SHA256 = 'x-bce-content-sha256';
+export const X_BCE_OBJECT_ACL = 'x-bce-object-acl';
+export const X_BCE_OBJECT_GRANT_READ = 'x-bce-object-grant-read';
 
-exports.X_HTTP_HEADERS = 'http_headers';
-exports.X_BODY = 'body';
-exports.X_STATUS_CODE = 'status_code';
-exports.X_MESSAGE = 'message';
-exports.X_CODE = 'code';
-exports.X_REQUEST_ID = 'request_id';
+export const X_HTTP_HEADERS = 'http_headers';
+export const X_BODY = 'body';
+export const X_STATUS_CODE = 'status_code';
+export const X_MESSAGE = 'message';
+export const X_CODE = 'code';
+export const X_REQUEST_ID = 'request_id';
 
-exports.SESSION_TOKEN = 'x-bce-security-token';
+export const SESSION_TOKEN = 'x-bce-security-token';
 
-exports.X_VOD_MEDIA_TITLE = 'x-vod-media-title';
-exports.X_VOD_MEDIA_DESCRIPTION = 'x-vod-media-description';
-exports.ACCEPT_ENCODING = 'accept-encoding';
-exports.ACCEPT = 'accept';
+export const X_VOD_MEDIA_TITLE = 'x-vod-media-title';
+export const X_VOD_MEDIA_DESCRIPTION = 'x-vod-media-description';
+export const ACCEPT_ENCODING = 'accept-encoding';
+export const ACCEPT = 'accept';
 
 
 

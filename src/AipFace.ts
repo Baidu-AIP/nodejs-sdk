@@ -17,13 +17,14 @@
 
 
 
-const BaseClient = require('./client/baseClient');
+import BaseClient = require('./client/baseClient');
 
-const RequestInfo = require('./client/requestInfo');
+import RequestInfo = require('./client/requestInfo');
 
-const HttpClient = require('./http/httpClientExt');
+import HttpClient = require('./http/httpClientExt');
+import HttpClientExt = require('./http/httpClientExt');
 
-const objectTools = require('./util/objectTools');
+import objectTools = require('./util/objectTools');
 
 const METHOD_POST = 'POST';
 
@@ -380,7 +381,6 @@ class AipFace extends BaseClient {
      */
     faceverify(object) {
         const FACEVERIFY_PATH = '/rest/2.0/face/v3/faceverify';
-        const HttpClientExt = require('./http/httpClientExt');
         let httpClientJson = new HttpClientExt();
         let requestInfo = new RequestInfo(FACEVERIFY_PATH,
             object, METHOD_POST);
@@ -413,7 +413,6 @@ class AipFace extends BaseClient {
      */
     match(object) {
         const MATCH_PATH = '/rest/2.0/face/v3/match';
-        const HttpClientExt = require('./http/httpClientExt');
         let httpClientJson = new HttpClientExt();
         let requestInfo = new RequestInfo(MATCH_PATH,
             object, METHOD_POST);
@@ -421,5 +420,10 @@ class AipFace extends BaseClient {
     }
 }
 
-module.exports = AipFace;
+export default AipFace;
+// @ts-ignore
+Object.assign(AipFace, exports);
+// @ts-ignore
+
+export = AipFace;
 

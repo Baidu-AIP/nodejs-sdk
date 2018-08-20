@@ -14,8 +14,9 @@
  * @file httpClient类
  * @author baiduAip
  */
-const request = require('request');
-const objectTools = require('../util/objectTools');
+import request = require('request');
+import objectTools = require('../util/objectTools');
+import RequestInfo = require('../client/requestInfo');
 
 /**
  * HttpClient类
@@ -25,11 +26,8 @@ const objectTools = require('../util/objectTools');
  * @class
  * @constructor
  */
-class HttpClient {
-    constructor() {
-
-    }
-    postWithInfo(requestInfo) {
+class HttpClient<T = any, O extends request.Options = request.Options> {
+    postWithInfo(requestInfo: RequestInfo): Promise<T> {
         let options = {
             method: requestInfo.method,
             url: requestInfo.getUrl(),
@@ -38,9 +36,10 @@ class HttpClient {
             timeout: HttpClient.DEFAULT_TIMEOUT
         };
 
+        // @ts-ignore
         return this.req(options);
     }
-    req(options) {
+    req(options: O): Promise<T> {
         // 首先处理设置INTERCEPTOR的情况
         if (objectTools.isFunction(HttpClient.REQUEST_INTERCEPTOR)) {
             options = HttpClient.REQUEST_INTERCEPTOR(options);
@@ -66,31 +65,38 @@ class HttpClient {
     }
 }
 
-/**
- * 用来设置request库的参数，会覆盖所有options，设置时请确保你知道它的作用
- * @see https://github.com/request/request#requestoptions-callback
- * @see https://github.com/request/request
- */
-HttpClient.setRequestOptions = function (options) {
-    HttpClient.REQUEST_GLOBAL_OPTIONS = options;
+namespace HttpClient
+{
+
+    /**
+     * 用来设置request库的参数，会覆盖所有options，设置时请确保你知道它的作用
+     * @see https://github.com/request/request#requestoptions-callback
+     * @see https://github.com/request/request
+     */
+    export function setRequestOptions<T extends request.CoreOptions>(options: T) {
+        HttpClient.REQUEST_GLOBAL_OPTIONS = options;
+    }
+
+    /**
+     * 用来获取和设置request库的参数，会覆盖所有options，设置时请确保你知道它的作用
+     * 优先级高于setRequestOptions
+     *
+     * @see https://github.com/request/request#requestoptions-callback
+     * @see https://github.com/request/request
+     */
+    export function setRequestInterceptor(interceptorCallback) {
+        HttpClient.REQUEST_INTERCEPTOR = interceptorCallback;
+    }
+
+    export let REQUEST_GLOBAL_OPTIONS: request.CoreOptions = null;
+
+    export let REQUEST_INTERCEPTOR = null;
+
+    export let DEFAULT_TIMEOUT = 10000;
 }
 
-
-/**
- * 用来获取和设置request库的参数，会覆盖所有options，设置时请确保你知道它的作用
- * 优先级高于setRequestOptions
- *
- * @see https://github.com/request/request#requestoptions-callback
- * @see https://github.com/request/request
- */
-HttpClient.setRequestInterceptor = function (interceptorCallback) {
-    HttpClient.REQUEST_INTERCEPTOR = interceptorCallback;
-}
-
-HttpClient.REQUEST_GLOBAL_OPTIONS = null;
-
-HttpClient.REQUEST_INTERCEPTOR = null;
-
-HttpClient.DEFAULT_TIMEOUT = 10000;
-
-module.exports = HttpClient;
+export default HttpClient;
+// @ts-ignore
+Object.assign(HttpClient, exports);
+// @ts-ignore
+export = HttpClient;

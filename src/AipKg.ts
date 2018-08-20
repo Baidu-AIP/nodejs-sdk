@@ -17,13 +17,13 @@
 
 
 
-const BaseClient = require('./client/baseClient');
+import BaseClient = require('./client/baseClient');
 
-const RequestInfo = require('./client/requestInfo');
+import RequestInfo = require('./client/requestInfo');
 
-const HttpClient = require('./http/httpClient');
+import HttpClient = require('./http/httpClient');
 
-const objectTools = require('./util/objectTools');
+import objectTools = require('./util/objectTools');
 
 const METHOD_POST = 'POST';
 
@@ -172,5 +172,8 @@ class AipKg extends BaseClient {
     }
 }
 
-module.exports = AipKg;
-
+export default AipKg
+// @ts-ignore
+Object.assign(AipKg, exports);
+// @ts-ignore
+export = AipKg;

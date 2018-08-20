@@ -14,10 +14,12 @@
  * @file baseClient
  * @author baiduAip
  */
-const DevAuth = require('../auth/devAuth');
+import DevAuth = require('../auth/devAuth');
 
-const DevAuthToken = require('../auth/devAuthToken');
+import DevAuthToken = require('../auth/devAuthToken');
+import HttpClient from "../http/httpClient";
 
+import RequestInfo = require('../client/requestInfo');
 
 /**
  * 无授权判断状态
@@ -84,6 +86,14 @@ const STATUS_READY = 2;
  */
 const STATUS_ERROR = -1;
 
+export type IAUTHTYPE = typeof AUTHTYPE_INIT | typeof AUTHTYPE_BCE | typeof AUTHTYPE_DEV | typeof AUTHTYPE_DEV_OR_BCE;
+export type ISTATUS = typeof STATUS_INIT | typeof STATUS_AUTHTYPE_REQESTING | typeof STATUS_READY | typeof STATUS_ERROR;
+
+export interface IBaseClientOptions
+{
+	isSkipScopeCheck?: boolean
+}
+
  /**
  * BaseClient类
  * 各具体接口类基类，处理鉴权逻辑等
@@ -94,7 +104,22 @@ const STATUS_ERROR = -1;
  * @param {string} sk The security key.
  */
 class BaseClient {
-    constructor(appId, ak, sk, options) {
+
+    protected appId: string | number = 0;
+    protected ak: string;
+    protected sk: string;
+
+    options: IBaseClientOptions;
+
+    authType: IAUTHTYPE;
+    status: ISTATUS;
+
+    pms?: ReturnType<typeof DevAuth.prototype.getToken>;
+
+    devAccessToken?: DevAuthToken;
+    devAuth: DevAuth;
+
+    constructor(appId: string, ak: string, sk: string, options?: IBaseClientOptions) {
         this.appId = 0;
         this.ak = ak;
         this.sk = sk;
@@ -155,13 +180,14 @@ class BaseClient {
             throw err;
         }
     }
-    doRequest(requestInfo, httpClient) {
+    doRequest<T>(requestInfo: RequestInfo, httpClient: HttpClient<T>): Promise<T> {
 
         // 如果获取token失败
         if (this.status === STATUS_ERROR) {
             this.authTypeReq();
         }
 
+        // @ts-ignore
         return this.pms.then(function () {
             // 预检函数，返回是否token过期
             let isTokenExpired = this.preRequest(requestInfo);
@@ -215,6 +241,10 @@ class BaseClient {
         }
         return false;
     }
- }
+}
 
-module.exports = BaseClient;
+export default BaseClient;
+// @ts-ignore
+Object.assign(BaseClient, exports);
+// @ts-ignore
+export = BaseClient;

@@ -22,7 +22,7 @@ var kEscapedMap = {
     '*': '%2A'
 };
 
-exports.normalize = function (string, encodingSlash) {
+export function normalize(string: string, encodingSlash?: boolean) {
     var result = encodeURIComponent(string);
     result = result.replace(/[!'\(\)\*]/g, function ($1) {
         return kEscapedMap[$1];
@@ -33,9 +33,11 @@ exports.normalize = function (string, encodingSlash) {
     }
 
     return result;
-};
+}
 
-exports.trim = function (string) {
+export function trim(string: string) {
     return (string || '').replace(/^\s+|\s+$/g, '');
-};
+}
 
+import * as strings from './strings';
+export default strings

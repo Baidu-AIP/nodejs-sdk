@@ -14,11 +14,11 @@
  * @file devAuth
  * @author baiduAip
  */
-const HttpClient = require('../http/httpClient');
+import HttpClient = require('../http/httpClient');
 
-const DevAuthToken = require('./devAuthToken');
+import DevAuthToken = require('./devAuthToken');
 
-const objectTool = require('../util/objectTools');
+import objectTool = require('../util/objectTools');
 
 const OPENAPI_TOKEN_URL = 'https://aip.baidubce.com/oauth/2.0/token';
 
@@ -34,12 +34,17 @@ const REQUEST_TOKEN_METHOD = 'post';
  * @param {string} sk Secret Key.
  */
 class DevAuth {
-    constructor(ak, sk) {
+    ak: string;
+    sk: string;
+
+    httpClient: HttpClient;
+
+    constructor(ak: string, sk: string) {
         this.ak = ak;
         this.sk = sk;
         this.httpClient = new HttpClient();
     }
-    gotData(data) {
+    gotData(this: DevAuth, data): DevAuthToken {
         // 如果返回数据非法，此时data为请求数据body
         if (!objectTool.isObject(data)) {
             throw {errorType: DevAuth.EVENT_ERRTYPE_ILLEGAL_RESPONSE, error: data};
@@ -52,14 +57,14 @@ class DevAuth {
             return new DevAuthToken(data.access_token, data.expires_in, data.scope);
         }
     }
-    gotDataError(err) {
+    gotDataError<T extends Error>(this: DevAuth, err: T) {
         // request.js内部错误封装下返回
         throw {
             errorType: DevAuth.EVENT_ERRTYPE_NETWORK,
             error: err
         };
     }
-    getToken() {
+    getToken<T = DevAuthToken>(): Promise<T> {
         let options = {
             url: OPENAPI_TOKEN_URL,
             method: REQUEST_TOKEN_METHOD,
@@ -69,15 +74,22 @@ class DevAuth {
                 client_secret: this.sk
             }
         };
-        return this.httpClient.req(options).then(this.gotData.bind(this),
-            this.gotDataError.bind(this))
+        // @ts-ignore
+        return this.httpClient.req<T>(options).then(this.gotData.bind(this) as typeof DevAuth.prototype.gotData,
+            this.gotDataError.bind(this) as typeof DevAuth.prototype.gotDataError)
     }
 }
 
-DevAuth.EVENT_ERRTYPE_ILLEGAL_RESPONSE = "ERRTYPE_ILLEGAL_RESPONSE";
+namespace DevAuth
+{
+    export const EVENT_ERRTYPE_ILLEGAL_RESPONSE = "ERRTYPE_ILLEGAL_RESPONSE"
+    export const EVENT_ERRTYPE_NETWORK = "ERRTYPE_NETWORK";
+    export const EVENT_ERRTYPE_NORMAL  = "ERRTYPE_NORMAL";
+}
 
-DevAuth.EVENT_ERRTYPE_NETWORK = "ERRTYPE_NETWORK";
+export default DevAuth;
+// @ts-ignore
+Object.assign(DevAuth, exports);
+// @ts-ignore
 
-DevAuth.EVENT_ERRTYPE_NORMAL  = "ERRTYPE_NORMAL";
-
-module.exports = DevAuth;
+export = DevAuth;

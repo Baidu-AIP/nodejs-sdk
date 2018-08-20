@@ -16,12 +16,12 @@
 
 /* eslint-env node */
 
-var fs = require('fs');
-var crypto = require('crypto');
+import fs = require('fs');
+import crypto = require('crypto');
 
-var Q = require('q');
+import Q = require('q');
 
-exports.md5sum = function (data, enc, digest) {
+export function md5sum(data, enc, digest) {
     if (!Buffer.isBuffer(data)) {
         data = new Buffer(data, enc || 'UTF-8');
     }
@@ -30,9 +30,9 @@ exports.md5sum = function (data, enc, digest) {
     md5.update(data);
 
     return md5.digest(digest || 'base64');
-};
+}
 
-exports.md5stream = function (stream, digest) {
+export function md5stream(stream, digest) {
     var deferred = Q.defer();
 
     var md5 = crypto.createHash('md5');
@@ -47,13 +47,13 @@ exports.md5stream = function (stream, digest) {
     });
 
     return deferred.promise;
-};
+}
 
-exports.md5file = function (filename, digest) {
-    return exports.md5stream(fs.createReadStream(filename), digest);
-};
+export function md5file(filename, digest) {
+    return md5stream(fs.createReadStream(filename), digest);
+}
 
-exports.md5blob = function (blob, digest) {
+export function md5blob(blob, digest) {
     var deferred = Q.defer();
 
     var reader = new FileReader();
@@ -62,20 +62,19 @@ exports.md5blob = function (blob, digest) {
         deferred.reject(reader.error);
     };
     reader.onloadend = function (e) {
+        // @ts-ignore
         if (e.target.readyState === FileReader.DONE) {
+            // @ts-ignore
             var content = e.target.result;
-            var md5 = exports.md5sum(content, null, digest);
+            var md5 = md5sum(content, null, digest);
             deferred.resolve(md5);
         }
     };
     return deferred.promise;
-};
+}
 
-
-
-
-
-
+import * as _crypto from './crypto';
+export default _crypto
 
 
 
