@@ -28,6 +28,8 @@ const METHOD_POST = 'POST';
 const BODY_ANALYSIS_PATH = '/rest/2.0/image-classify/v1/body_analysis';
 const BODY_ATTR_PATH = '/rest/2.0/image-classify/v1/body_attr';
 const BODY_NUM_PATH = '/rest/2.0/image-classify/v1/body_num';
+const GESTURE_PATH = '/rest/2.0/image-classify/v1/gesture';
+const BODY_SEG_PATH = '/rest/2.0/image-classify/v1/body_seg';
 
 
 /**
@@ -100,6 +102,38 @@ class AipBodyAnalysis extends BaseClient {
         let param = {
             image: image,
             targetPath: BODY_NUM_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 手势识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    gesture(image, options) {
+        let param = {
+            image: image,
+            targetPath: GESTURE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 人像分割接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    bodySeg(image, options) {
+        let param = {
+            image: image,
+            targetPath: BODY_SEG_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
