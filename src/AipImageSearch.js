@@ -175,6 +175,24 @@ class AipImageSearch extends BaseClient {
     }
 
     /**
+     * 相同图检索—更新接口
+     *
+     * @param {string} contSign - 图片签名
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   brief 更新的摘要信息，最长256B。样例：{"name":"周杰伦", "id":"666"}
+     *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
+     * @return {Promise} - 标准Promise对象
+     */
+    sameHqUpdateContSign(contSign, options) {
+        let param = {
+            cont_sign: contSign,
+            targetPath: SAME_HQ_UPDATE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
      * 相同图检索—删除接口
      *
      * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
@@ -329,6 +347,24 @@ class AipImageSearch extends BaseClient {
     similarUpdateUrl(url, options) {
         let param = {
             url: url,
+            targetPath: SIMILAR_UPDATE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 相似图检索—更新接口
+     *
+     * @param {string} contSign - 图片签名
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   brief 更新的摘要信息，最长256B。样例：{"name":"周杰伦", "id":"666"}
+     *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
+     * @return {Promise} - 标准Promise对象
+     */
+    similarUpdateContSign(contSign, options) {
+        let param = {
+            cont_sign: contSign,
             targetPath: SIMILAR_UPDATE_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
@@ -493,6 +529,25 @@ class AipImageSearch extends BaseClient {
     productUpdateUrl(url, options) {
         let param = {
             url: url,
+            targetPath: PRODUCT_UPDATE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 商品检索—更新接口
+     *
+     * @param {string} contSign - 图片签名
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   brief 更新的摘要信息，最长256B。样例：{"name":"周杰伦", "id":"666"}
+     *   class_id1 更新的商品分类1，支持1-60范围内的整数。
+     *   class_id2 更新的商品分类2，支持1-60范围内的整数。
+     * @return {Promise} - 标准Promise对象
+     */
+    productUpdate(contSign, options) {
+        let param = {
+            cont_sign: contSign,
             targetPath: PRODUCT_UPDATE_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));

@@ -38,6 +38,8 @@ const VEHICLE_LICENSE_PATH = '/rest/2.0/ocr/v1/vehicle_license';
 const LICENSE_PLATE_PATH = '/rest/2.0/ocr/v1/license_plate';
 const BUSINESS_LICENSE_PATH = '/rest/2.0/ocr/v1/business_license';
 const RECEIPT_PATH = '/rest/2.0/ocr/v1/receipt';
+const TRAIN_TICKET_PATH = '/rest/2.0/ocr/v1/train_ticket';
+const TAXI_RECEIPT_PATH = '/rest/2.0/ocr/v1/taxi_receipt';
 const FORM_PATH = '/rest/2.0/ocr/v1/form';
 const TABLE_RECOGNIZE_PATH = '/rest/2.0/solution/v1/form_ocr/request';
 const TABLE_RESULT_GET_PATH = '/rest/2.0/solution/v1/form_ocr/get_request_result';
@@ -392,6 +394,38 @@ class AipOcr extends BaseClient {
         let param = {
             image: image,
             targetPath: RECEIPT_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 火车票识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    trainTicket(image, options) {
+        let param = {
+            image: image,
+            targetPath: TRAIN_TICKET_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 出租车票识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    taxiReceipt(image, options) {
+        let param = {
+            image: image,
+            targetPath: TAXI_RECEIPT_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }
