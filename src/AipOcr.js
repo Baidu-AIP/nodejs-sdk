@@ -51,6 +51,8 @@ const PASSPORT_PATH = '/rest/2.0/ocr/v1/passport';
 const BUSINESS_CARD_PATH = '/rest/2.0/ocr/v1/business_card';
 const HANDWRITING_PATH = '/rest/2.0/ocr/v1/handwriting';
 const CUSTOM_PATH = '/rest/2.0/solution/v1/iocr/recognise';
+const HK_MACAU_EXITENTRYPERMIT_PATH = '/rest/2.0/ocr/v1/HK_Macau_exitentrypermit';
+const TAIWAN_EXITENTRYPERMIT_PATH = '/rest/2.0/ocr/v1/taiwan_exitentrypermit';
 
 
 /**
@@ -639,6 +641,34 @@ class AipOcr extends BaseClient {
                 }, interval);
             })
         });
+    }
+
+    /**
+     * 港澳通行证识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @return {Promise} - 标准Promise对象
+     */
+    HK_Macau_exitentrypermit(image, options) {
+        let param = {
+            image: image,
+            targetPath: HK_MACAU_EXITENTRYPERMIT_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 台湾通行证识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @return {Promise} - 标准Promise对象
+     */
+    taiwan_exitentrypermit(image, options) {
+        let param = {
+            image: image,
+            targetPath: TAIWAN_EXITENTRYPERMIT_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
 }
 
