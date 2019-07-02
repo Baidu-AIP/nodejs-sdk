@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Baidu-AIP/nodejs-sdk.git"
+    "url": "git+https://github.com/MaShizhen/nodejs-sdk.git"
   },
   "dependencies": {
     "debug": "^2.6.0",
@@ -25,9 +25,9 @@
     "mocha": "^4.0.1"
   },
   "bugs": {
-    "url": "https://github.com/Baidu-AIP/nodejs-sdk/issues"
+    "url": "https://github.com/MaShizhen/nodejs-sdk/issues"
   },
-  "homepage": "https://github.com/Baidu-AIP/nodejs-sdk#readme",
+  "homepage": "https://github.com/MaShizhen/nodejs-sdk#readme",
   "directories": {
     "test": "test"
   }
