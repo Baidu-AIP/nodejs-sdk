@@ -7,7 +7,7 @@
     "test": "mocha"
   },
   "author": "baidu-aip",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MaShizhen/nodejs-sdk.git"
@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/MaShizhen/nodejs-sdk/issues"
   },
-  "homepage": "https://github.com/MaShizhen/nodejs-sdk#readme",
+  "homepage": "http://www.01feidao.com/",
   "directories": {
     "test": "test"
   }
