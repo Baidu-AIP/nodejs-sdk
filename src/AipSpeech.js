@@ -35,6 +35,7 @@ const CONTENT_TYPE_JSON = 'application/json';
 const HOST_VOP = 'vop.baidu.com';
 const HOST_TSN = 'tsn.baidu.com';
 const PATH_VOP = '/server_api';
+const PATH_VOP_PRO = '/pro_api';
 const PATH_TTS = '/text2audio';
 
 /**
@@ -51,6 +52,18 @@ class AipSpeech extends BaseClient {
     constructor(appId, ak, sk) {
         // 在speech.baidu.com上创建的应用需要跳过此项权限检查
         super(appId, ak, sk, {isSkipScopeCheck: true});
+    }
+
+    recognizePro(buffer, format, rate, options) {
+        let param = {
+            speech: buffer && buffer.toString(code.BASE64),
+            format: format,
+            rate: rate,
+            channel: 1,
+            len: buffer && buffer.toString(code.BIN).length
+        };
+
+        return this.asrImplPro(objectTools.merge(param, options));
     }
 
     recognize(buffer, format, rate, options) {
@@ -77,8 +90,16 @@ class AipSpeech extends BaseClient {
     }
 
     asrImpl(param) {
+        return this.asrImplPath(param, PATH_VOP);
+    }
+
+    asrImplPro(param) {
+        return this.asrImplPath(param, PATH_VOP_PRO);
+    }
+
+    asrImplPath(param, url) {
         let httpClient = new HttpClientVoiceASR();
-        let requestInfo = new RequestInfo(PATH_VOP, param, METHOD_POST, false, {
+        let requestInfo = new RequestInfo(url, param, METHOD_POST, false, {
                 [httpHeader.CONTENT_TYPE]: CONTENT_TYPE_JSON
             });
         requestInfo.setHost(HOST_VOP);

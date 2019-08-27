@@ -6,6 +6,7 @@ let services = [
     'contentCensor',
     'imageSearch',
     'bodyanalysis',
+    'imageProcess',
     'imageClassify',
     'face',
     'ocr',

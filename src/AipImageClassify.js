@@ -35,6 +35,10 @@ const ANIMAL_DETECT_PATH = '/rest/2.0/image-classify/v1/animal';
 const PLANT_DETECT_PATH = '/rest/2.0/image-classify/v1/plant';
 const OBJECT_DETECT_PATH = '/rest/2.0/image-classify/v1/object_detect';
 const LANDMARK_PATH = '/rest/2.0/image-classify/v1/landmark';
+const FLOWER_PATH = '/rest/2.0/image-classify/v1/flower';
+const INGREDIENT_PATH = '/rest/2.0/image-classify/v1/classify/ingredient';
+const REDWINE_PATH = '/rest/2.0/image-classify/v1/redwine';
+const CURRENCY_PATH = '/rest/2.0/image-classify/v1/currency';
 
 
 /**
@@ -245,6 +249,73 @@ class AipImageClassify extends BaseClient {
         let param = {
             image: image,
             targetPath: LANDMARK_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 花卉识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   top_num 返回预测得分top结果数，默认为5
+     *   baike_num 返回百科信息的结果数，默认不返回
+     * @return {Promise} - 标准Promise对象
+     */
+    flower(image, options) {
+        let param = {
+            image: image,
+            targetPath: FLOWER_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 食材识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   top_num 返回预测得分top结果数，如果为空或小于等于0默认为5；如果大于20默认20
+     * @return {Promise} - 标准Promise对象
+     */
+    ingredient(image, options) {
+        let param = {
+            image: image,
+            targetPath: INGREDIENT_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 红酒识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    redwine(image, options) {
+        let param = {
+            image: image,
+            targetPath: REDWINE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 货币识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    currency(image, options) {
+        let param = {
+            image: image,
+            targetPath: CURRENCY_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }

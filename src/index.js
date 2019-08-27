@@ -20,6 +20,7 @@ module.exports = {
     bodyanalysis: require('./AipBodyAnalysis'),
     imageSearch: require('./AipImageSearch'),
     imageClassify: require('./AipImageClassify'),
+    imageProcess: require('./AipImageProcess'),
     contentCensor: require('./AipContentCensor'),
     face: require('./AipFace'),
     ocr: require('./AipOcr'),

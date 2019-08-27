@@ -545,7 +545,7 @@ class AipImageSearch extends BaseClient {
      *   class_id2 更新的商品分类2，支持1-60范围内的整数。
      * @return {Promise} - 标准Promise对象
      */
-    productUpdate(contSign, options) {
+    productUpdateContSign(contSign, options) {
         let param = {
             cont_sign: contSign,
             targetPath: PRODUCT_UPDATE_PATH
