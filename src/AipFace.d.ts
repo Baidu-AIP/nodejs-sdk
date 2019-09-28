@@ -54,7 +54,7 @@ declare class AipFace extends BaseClient {
      *   max_user_num 查找后返回的用户数量。返回相似度最高的几个用户，默认为1，最多返回20个。
      * @return {Promise} - 标准Promise对象
      */
-    search(image: any, imageType: any, groupIdList: any, options: any): Promise<{}>;
+    search(image: any, imageType: any, groupIdList: any, options: any): Promise<AipFace.IAipFaceSearchReturn>;
     /**
      * 人脸注册接口
      *
@@ -69,7 +69,7 @@ declare class AipFace extends BaseClient {
      *   liveness_control 活体检测控制  **NONE**: 不进行控制 **LOW**:较低的活体要求(高通过率 低攻击拒绝率) **NORMAL**: 一般的活体要求(平衡的攻击拒绝率, 通过率) **HIGH**: 较高的活体要求(高攻击拒绝率 低通过率) **默认NONE**
      * @return {Promise} - 标准Promise对象
      */
-    addUser(image: any, imageType: any, groupId: any, userId: any, options: any): Promise<{}>;
+    addUser(image: any, imageType: any, groupId: any, userId: any, options: any): Promise<AipFace.IAipFaceAddUserReturn>;
     /**
      * 人脸更新接口
      *
@@ -84,7 +84,7 @@ declare class AipFace extends BaseClient {
      *   liveness_control 活体检测控制  **NONE**: 不进行控制 **LOW**:较低的活体要求(高通过率 低攻击拒绝率) **NORMAL**: 一般的活体要求(平衡的攻击拒绝率, 通过率) **HIGH**: 较高的活体要求(高攻击拒绝率 低通过率) **默认NONE**
      * @return {Promise} - 标准Promise对象
      */
-    updateUser(image: any, imageType: any, groupId: any, userId: any, options: any): Promise<{}>;
+    updateUser(image: any, imageType: any, groupId: any, userId: any, options: any): Promise<AipFace.IAipFaceAddUserReturn>;
     /**
      * 人脸删除接口
      *
@@ -95,7 +95,7 @@ declare class AipFace extends BaseClient {
      * @description options - options列表:
      * @return {Promise} - 标准Promise对象
      */
-    faceDelete(userId: any, groupId: any, faceToken: any, options: any): Promise<{}>;
+    faceDelete(userId: any, groupId: any, faceToken: any, options: any): Promise<AipFace.IAipFaceDeleteReturn>;
     /**
      * 用户信息查询接口
      *
@@ -245,6 +245,52 @@ declare class AipFace extends BaseClient {
      * > ]
      */
     match(object: any): Promise<{}>;
+}
+export declare namespace AipFace {
+    //人脸注册返回结构-start
+    interface IAipFaceAddUserReturn {
+        error_msg: any;
+        error_code?: any;
+        timestamp: any;
+        result?: any | IAipFaceAddUserResult;
+        log_id: number;
+    }
+    interface IAipFaceAddUserResult{
+        face_token?:any;
+        location?: IAipFaceAddUserImage
+    }
+    interface IAipFaceAddUserImage{
+        [k: string]: any;
+    }
+    //人脸注册返回结构-end
+    //人脸注册搜索结构-start
+    interface IAipFaceSearchReturn {
+        error_msg: any;
+        error_code?: any;
+        timestamp: any;
+        result?: any | IAipFaceSearchResult;
+        log_id: number;
+    }
+    interface IAipFaceSearchResult{
+        face_token?:any;
+        user_list?: Array<{IAipFaceSearchUserInfo}>
+    }
+    interface IAipFaceSearchUserInfo{
+        group_id : any;
+        user_id : any;
+        user_info? : any;
+        score: any
+    }
+    //人脸注册搜索结构-end
+    //人脸注册删除结构-start
+    interface IAipFaceDeleteReturn {
+        error_msg: any;
+        error_code?: any;
+        timestamp: any;
+        result?: any;
+        log_id: number;
+    }
+    //人脸注册删除结构-start
 }
 export default AipFace;
 export = AipFace;
