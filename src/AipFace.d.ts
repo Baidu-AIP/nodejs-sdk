@@ -39,7 +39,7 @@ declare class AipFace extends BaseClient {
      *   face_type 人脸的类型 **LIVE**表示生活照：通常为手机、相机拍摄的人像图片、或从网络获取的人像图片等**IDCARD**表示身份证芯片照：二代身份证内置芯片中的人像照片 **WATERMARK**表示带水印证件照：一般为带水印的小图，如公安网小图 **CERT**表示证件照片：如拍摄的身份证、工卡、护照、学生证等证件图片 默认**LIVE**
      * @return {Promise} - 标准Promise对象
      */
-    detect(image: any, imageType: any, options: any): Promise<{}>;
+    detect(image: any, imageType: any, options: any): Promise<AipFace.IAipFaceDetectReturn>;
     /**
      * 人脸搜索接口
      *
@@ -147,7 +147,7 @@ declare class AipFace extends BaseClient {
      * @description options - options列表:
      * @return {Promise} - 标准Promise对象
      */
-    deleteUser(groupId: any, userId: any, options: any): Promise<{}>;
+    deleteUser(groupId: any, userId: any, options: any): Promise<AipFace.IAipFaceDeleteReturn>;
     /**
      * 创建用户组接口
      *
@@ -156,7 +156,7 @@ declare class AipFace extends BaseClient {
      * @description options - options列表:
      * @return {Promise} - 标准Promise对象
      */
-    groupAdd(groupId: any, options: any): Promise<{}>;
+    groupAdd(groupId: any, options: any): Promise<AipFace.IAipFaceDeleteReturn>;
     /**
      * 删除用户组接口
      *
@@ -165,7 +165,7 @@ declare class AipFace extends BaseClient {
      * @description options - options列表:
      * @return {Promise} - 标准Promise对象
      */
-    groupDelete(groupId: any, options: any): Promise<{}>;
+    groupDelete(groupId: any, options: any): Promise<AipFace.IAipFaceDeleteReturn>;
     /**
      * 组列表查询接口
      *
@@ -247,6 +247,9 @@ declare class AipFace extends BaseClient {
     match(object: any): Promise<{}>;
 }
 export declare namespace AipFace {
+    interface IAipFaceFields{
+        [k: string]: any;
+    }
     //人脸注册返回结构-start
     interface IAipFaceAddUserReturn {
         error_msg: any;
@@ -257,10 +260,7 @@ export declare namespace AipFace {
     }
     interface IAipFaceAddUserResult{
         face_token?:any;
-        location?: IAipFaceAddUserImage
-    }
-    interface IAipFaceAddUserImage{
-        [k: string]: any;
+        location?: IAipFaceFields
     }
     //人脸注册返回结构-end
     //人脸注册搜索结构-start
@@ -273,7 +273,7 @@ export declare namespace AipFace {
     }
     interface IAipFaceSearchResult{
         face_token?:any;
-        user_list?: Array<{IAipFaceSearchUserInfo}>
+        user_list?: IAipFaceSearchUserInfo[]
     }
     interface IAipFaceSearchUserInfo{
         group_id : any;
@@ -282,7 +282,7 @@ export declare namespace AipFace {
         score: any
     }
     //人脸注册搜索结构-end
-    //人脸注册删除结构-start
+    //删除返回结构-start
     interface IAipFaceDeleteReturn {
         error_msg: any;
         error_code?: any;
@@ -290,7 +290,29 @@ export declare namespace AipFace {
         result?: any;
         log_id: number;
     }
-    //人脸注册删除结构-start
+    //删除返回结构-end
+    //人脸注册检测结构-start
+    interface IAipFaceDetectReturn {
+        error_msg: any;
+        error_code?: any;
+        timestamp: any;
+        result?: any | IAipFaceDetectResult;
+        log_id: number;
+    }
+    interface IAipFaceDetectResult {
+        face_num?: any;
+        face_list?: IAipFaceUserResult[];
+    }
+    interface IAipFaceUserResult {
+        face_token: any;
+        location: IAipFaceFields;
+        face_probability: any;
+        angle: IAipFaceFields;
+        age: any;
+        beauty: any;
+        [k: string]: any;
+    }
+    //人脸注册检测结构-end
 }
 export default AipFace;
 export = AipFace;
