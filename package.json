@@ -1,34 +1,32 @@
 {
-  "name": "@feidao-msz/baidu-aip-sdk",
-  "version": "1.0.201910111510",
+  "name": "baidu-aip-sdk",
+  "version": "2.3.6",
   "description": "百度AI开放平台Nodejs SDK, 文档以及详情请访问官网: https://ai.baidu.com",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "tsc && mocha"
   },
   "author": "baidu-aip",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MaShizhen/nodejs-sdk.git"
+    "url": "https://github.com/Baidu-AIP/nodejs-sdk.git"
   },
   "dependencies": {
     "debug": "^2.6.0",
     "iconv-lite": "^0.4.15",
     "request": "^2.79.0",
-    "underscore": "^1.8.3",
-    "should": "^13.2.0",
-    "mocha": "^4.0.1"
+    "underscore": "^1.8.3"
   },
   "optionalDependencies": {
-    "should": "^13.2.0",
-    "mocha": "^4.0.1"
+    "mocha": "^4.0.1",
+    "should": "^13.2.0"
   },
-  "bugs": {
-    "url": "https://github.com/MaShizhen/nodejs-sdk/issues"
-  },
-  "homepage": "http://www.01feidao.com/",
-  "directories": {
-    "test": "test"
+  "devDependencies": {
+    "@types/debug": "^4.1.5",
+    "@types/node": "^12.11.7",
+    "@types/request": "^2.48.2",
+    "@types/underscore": "^1.9.3",
+    "typescript": "^3.6.4"
   }
 }
