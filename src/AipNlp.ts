@@ -71,7 +71,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public lexer(text: string, options: { [key: string]: string; }) {
 		const param = {
-			text: text,
+			text,
 			targetPath: LEXER_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -87,7 +87,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public lexerCustom(text: string, options: { [key: string]: string; }) {
 		const param = {
-			text: text,
+			text,
 			targetPath: LEXER_CUSTOM_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -104,7 +104,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public depparser(text: string, options: { [key: string]: string; }) {
 		const param = {
-			text: text,
+			text,
 			targetPath: DEP_PARSER_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -120,7 +120,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public wordembedding(word: string, options: { [key: string]: string; }) {
 		const param = {
-			word: word,
+			word,
 			targetPath: WORD_EMBEDDING_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -136,7 +136,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public dnnlmCn(text: string, options: { [key: string]: string; }) {
 		const param = {
-			text: text,
+			text,
 			targetPath: DNNLM_CN_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -191,7 +191,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public commentTag(text: string, options: { [key: string]: string; }) {
 		const param = {
-			text: text,
+			text,
 			targetPath: COMMENT_TAG_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -207,7 +207,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public sentimentClassify(text: string, options: { [key: string]: string; }) {
 		const param = {
-			text: text,
+			text,
 			targetPath: SENTIMENT_CLASSIFY_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -224,8 +224,8 @@ export default class AipNlp extends BaseClient {
 	 */
 	public keyword(title: string, content: string, options: { [key: string]: string; }) {
 		const param = {
-			title: title,
-			content: content,
+			title,
+			content,
 			targetPath: KEYWORD_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -242,8 +242,8 @@ export default class AipNlp extends BaseClient {
 	 */
 	public topic(title: string, content: string, options: { [key: string]: string; }) {
 		const param = {
-			title: title,
-			content: content,
+			title,
+			content,
 			targetPath: TOPIC_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -259,7 +259,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public ecnet(text: string, options: { [key: string]: string; }) {
 		const param = {
-			text: text,
+			text,
 			targetPath: ECNET_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -276,7 +276,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public emotion(text: string, options: { [key: string]: string; }) {
 		const param = {
-			text: text,
+			text,
 			targetPath: EMOTION_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -285,7 +285,7 @@ export default class AipNlp extends BaseClient {
 	/**
 	 * 新闻摘要接口接口
 	 *
-	 * @param {string} content - 字符串（限200字符数）字符串仅支持GBK编码，长度需小于200字符数（即400字节），请输入前确认字符数没有超限，若字符数超长会返回错误。标题在算法中具有重要的作用，若文章确无标题，输入参数的“标题”字段为空即可
+	 * @param {string} content - 字符串（限3000字符数以内）字符串仅支持GBK编码，长度需小于3000字符数（即6000字节），请输入前确认字符数没有超限，若字符数超长会返回错误。正文中如果包含段落信息，请使用"\n"分隔，段落信息算法中有重要的作用，请尽量保留
 	 * @param {integer} maxSummaryLen - 此数值将作为摘要结果的最大长度。例如：原文长度1000字，本参数设置为150，则摘要结果的最大长度是150字；推荐最优区间：200-500字
 	 * @param {Object} options - 可选参数对象，key: value都为string类型
 	 * @description options - options列表:
@@ -294,7 +294,7 @@ export default class AipNlp extends BaseClient {
 	 */
 	public newsSummary(content: string, maxSummaryLen: number, options: { [key: string]: string; }) {
 		const param = {
-			content: content,
+			content,
 			max_summary_len: maxSummaryLen,
 			targetPath: NEWS_SUMMARY_PATH
 		};

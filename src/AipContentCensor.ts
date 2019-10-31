@@ -25,7 +25,9 @@ const CONTENT_TYPE_JSON = 'application/json';
 
 const METHOD_POST = 'POST';
 
-const PATH_USER_DEFINED = '/rest/2.0/solution/v1/img_censor/user_defined';
+const PATH_USER_DEFINED_IMAGE = '/rest/2.0/solution/v1/img_censor/v2/user_defined';
+const PATH_USER_DEFINED_TEXT = '/rest/2.0/solution/v1/text_censor/v2/user_defined';
+
 const PATH_ANTIPORN_GIF = '/rest/2.0/antiporn/v1/detect_gif';
 const PATH_FACEAUDIT = '/rest/2.0/solution/v1/face_audit';
 const PATH_COMBOCENSOR = '/api/v1/solution/direct/img_censor';
@@ -127,7 +129,15 @@ export default class AipImageCensor extends BaseClient {
 		if (type === 'base64') {
 			param.image = image;
 		}
-		param.targetPath = PATH_USER_DEFINED;
+		param.targetPath = PATH_USER_DEFINED_IMAGE;
+		return this.commonImpl(param);
+	}
+
+	public textCensorUserDefined(text: string, type: 'url' | 'base64') {
+		const param = {
+			text,
+			targetPath: PATH_USER_DEFINED_TEXT
+		};
 		return this.commonImpl(param);
 	}
 

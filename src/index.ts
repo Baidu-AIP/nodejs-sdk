@@ -18,6 +18,7 @@
 export { default as bodyanalysis } from './AipBodyAnalysis';
 export { default as imageSearch } from './AipImageSearch';
 export { default as imageClassify } from './AipImageClassify';
+export { default as imageProcess } from './AipImageProcess';
 export { default as contentCensor } from './AipContentCensor';
 export { default as face } from './AipFace';
 export { default as ocr } from './AipOcr';

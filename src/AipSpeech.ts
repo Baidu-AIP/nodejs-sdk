@@ -30,6 +30,7 @@ const CONTENT_TYPE_JSON = 'application/json';
 const HOST_VOP = 'vop.baidu.com';
 const HOST_TSN = 'tsn.baidu.com';
 const PATH_VOP = '/server_api';
+const PATH_VOP_PRO = '/pro_api';
 const PATH_TTS = '/text2audio';
 
 /**
@@ -71,9 +72,17 @@ export default class AipSpeech extends BaseClient {
 		return this.asrImpl(merge(param, options));
 	}
 
-	private asrImpl(param: any) {
-		const httpClient = new HttpClientVoiceASR();
-		const requestInfo = new RequestInfo(PATH_VOP, param, METHOD_POST, false, {
+	public asrImpl(param: any) {
+		return this.asrImplPath(param, PATH_VOP);
+	}
+
+	public asrImplPro(param: any) {
+		return this.asrImplPath(param, PATH_VOP_PRO);
+	}
+
+	private asrImplPath(param: any, url: string) {
+		let httpClient = new HttpClientVoiceASR();
+		let requestInfo = new RequestInfo(url, param, METHOD_POST, false, {
 			[httpHeader.CONTENT_TYPE]: CONTENT_TYPE_JSON
 		});
 		requestInfo.setHost(HOST_VOP);

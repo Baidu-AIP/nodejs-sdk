@@ -23,7 +23,7 @@ const Q = require('q');
 
 export function md5sum(data: any, enc?: BufferEncoding, digest?: HexBase64Latin1Encoding) {
 	if (!Buffer.isBuffer(data)) {
-		data = new Buffer(data, enc || 'utf-8');
+		data = Buffer.from(data, enc || 'utf-8');
 	}
 
 	const md5 = createHash('md5');

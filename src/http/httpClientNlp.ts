@@ -46,7 +46,7 @@ export default class HttpClientNlp extends HttpClient {
 		return new Promise<T>(function (resolve, reject) {
 			request(options, function (error, response, body) {
 				if (error === null) {
-					const buffer = new Buffer(body);
+					const buffer = Buffer.from(body);
 					const decodedBody = decode(buffer, code.GBK);
 					try {
 						resolve(JSON.parse(decodedBody));

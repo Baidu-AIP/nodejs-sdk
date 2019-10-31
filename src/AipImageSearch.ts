@@ -69,9 +69,9 @@ export default class AipImageSearch extends BaseClient {
 	 *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public sameHqAdd(image: string, options: { [key: string]: string; }) {
+	public sameHqAdd(image: string, options: { brief: string; tags: string; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: SAME_HQ_ADD_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -87,7 +87,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public sameHqAddUrl(url: string, options: { [key: string]: string; }) {
+	public sameHqAddUrl(url: string, options: { brief: string; tags: string; }) {
 		const param = {
 			url: url,
 			targetPath: SAME_HQ_ADD_PATH
@@ -107,9 +107,9 @@ export default class AipImageSearch extends BaseClient {
 	 *   rn 分页功能，截取条数，例：250
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public sameHqSearch(image: string, options: { [key: string]: string; }) {
+	public sameHqSearch(image: string, options: { tags: string; tag_logic: 0 | 1; pn: number; rn: number; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: SAME_HQ_SEARCH_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -127,7 +127,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   rn 分页功能，截取条数，例：250
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public sameHqSearchUrl(url: string, options: { [key: string]: string; }) {
+	public sameHqSearchUrl(url: string, options: { tags: string; tag_logic: 0 | 1; pn: number; rn: number; }) {
 		const param = {
 			url: url,
 			targetPath: SAME_HQ_SEARCH_PATH
@@ -145,9 +145,9 @@ export default class AipImageSearch extends BaseClient {
 	 *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public sameHqUpdate(image: string, options: { [key: string]: string; }) {
+	public sameHqUpdate(image: string, options: { brief: string; tags: string; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: SAME_HQ_UPDATE_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -163,7 +163,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public sameHqUpdateUrl(url: string, options: { [key: string]: string; }) {
+	public sameHqUpdateUrl(url: string, options: { brief: string; tags: string; }) {
 		const param = {
 			url: url,
 			targetPath: SAME_HQ_UPDATE_PATH
@@ -181,7 +181,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public sameHqUpdateContSign(contSign: string, options: { [key: string]: string; }) {
+	public sameHqUpdateContSign(contSign: string, options: { brief: string; tags: string; }) {
 		const param = {
 			cont_sign: contSign,
 			targetPath: SAME_HQ_UPDATE_PATH
@@ -199,7 +199,7 @@ export default class AipImageSearch extends BaseClient {
 	 */
 	public sameHqDeleteByImage(image: string, options: { [key: string]: string; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: SAME_HQ_DELETE_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -249,7 +249,7 @@ export default class AipImageSearch extends BaseClient {
 	 */
 	public similarAdd(image: string, options: { [key: string]: string; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: SIMILAR_ADD_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -285,9 +285,9 @@ export default class AipImageSearch extends BaseClient {
 	 *   rn 分页功能，截取条数，例：250
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public similarSearch(image: string, options: { [key: string]: string; }) {
+	public similarSearch(image: string, options: { tags: string; tag_logic: 0 | 1; pn: number; rn: number; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: SIMILAR_SEARCH_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -305,7 +305,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   rn 分页功能，截取条数，例：250
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public similarSearchUrl(url: string, options: { [key: string]: string; }) {
+	public similarSearchUrl(url: string, options: { tags: string; tag_logic: 0 | 1; pn: number; rn: number; }) {
 		const param = {
 			url: url,
 			targetPath: SIMILAR_SEARCH_PATH
@@ -323,9 +323,9 @@ export default class AipImageSearch extends BaseClient {
 	 *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public similarUpdate(image: string, options: { [key: string]: string; }) {
+	public similarUpdate(image: string, options: { brief: string; tags: string; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: SIMILAR_UPDATE_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -341,7 +341,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public similarUpdateUrl(url: string, options: { [key: string]: string; }) {
+	public similarUpdateUrl(url: string, options: { brief: string; tags: string; }) {
 		const param = {
 			url: url,
 			targetPath: SIMILAR_UPDATE_PATH
@@ -359,7 +359,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   tags 1 - 65535范围内的整数，tag间以逗号分隔，最多2个tag。样例："100,11" ；检索时可圈定分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public similarUpdateContSign(contSign: string, options: { [key: string]: string; }) {
+	public similarUpdateContSign(contSign: string, options: { brief: string; tags: string; }) {
 		const param = {
 			cont_sign: contSign,
 			targetPath: SIMILAR_UPDATE_PATH
@@ -377,7 +377,7 @@ export default class AipImageSearch extends BaseClient {
 	 */
 	public similarDeleteByImage(image: string, options: { [key: string]: string; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: SIMILAR_DELETE_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -426,9 +426,9 @@ export default class AipImageSearch extends BaseClient {
 	 *   class_id2 商品分类维度1，支持1-60范围内的整数。检索时可圈定该分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public productAdd(image: string, options: { [key: string]: string; }) {
+	public productAdd(image: string, options: { brief: string; class_id1: string; class_id2: string;[key: string]: string; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: PRODUCT_ADD_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -445,7 +445,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   class_id2 商品分类维度1，支持1-60范围内的整数。检索时可圈定该分类维度进行检索
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public productAddUrl(url: string, options: { [key: string]: string; }) {
+	public productAddUrl(url: string, options: { brief: string; class_id1: string; class_id2: string;[key: string]: string; }) {
 		const param = {
 			url: url,
 			targetPath: PRODUCT_ADD_PATH
@@ -465,9 +465,9 @@ export default class AipImageSearch extends BaseClient {
 	 *   rn 分页功能，截取条数，例：250
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public productSearch(image: string, options: { [key: string]: string; }) {
+	public productSearch(image: string, options: { class_id1: string; class_id2: string; pn: number; rn: number; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: PRODUCT_SEARCH_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -485,7 +485,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   rn 分页功能，截取条数，例：250
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public productSearchUrl(url: string, options: { [key: string]: string; }) {
+	public productSearchUrl(url: string, options: { class_id1: string; class_id2: string; pn: number; rn: number; }) {
 		const param = {
 			url: url,
 			targetPath: PRODUCT_SEARCH_PATH
@@ -504,9 +504,9 @@ export default class AipImageSearch extends BaseClient {
 	 *   class_id2 更新的商品分类2，支持1-60范围内的整数。
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public productUpdateByImage(image: string, options: { [key: string]: string; }) {
+	public productUpdate(image: string, options: { brief: string; class_id1: string; class_id2: string; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: PRODUCT_UPDATE_PATH
 		};
 		return this.commonImpl(merge(param, options));
@@ -542,7 +542,7 @@ export default class AipImageSearch extends BaseClient {
 	 *   class_id2 更新的商品分类2，支持1-60范围内的整数。
 	 * @return {Promise} - 标准Promise对象
 	 */
-	public productUpdateBySign(contSign: string, options: { [key: string]: string; }) {
+	public productUpdateContSign(contSign: string, options: { [key: string]: string; }) {
 		const param = {
 			cont_sign: contSign,
 			targetPath: PRODUCT_UPDATE_PATH
@@ -560,7 +560,7 @@ export default class AipImageSearch extends BaseClient {
 	 */
 	public productDeleteByImage(image: string, options: { [key: string]: string; }) {
 		const param = {
-			image: image,
+			image,
 			targetPath: PRODUCT_DELETE_PATH
 		};
 		return this.commonImpl(merge(param, options));
