@@ -81,8 +81,8 @@ export default class AipSpeech extends BaseClient {
 	}
 
 	private asrImplPath(param: any, url: string) {
-		let httpClient = new HttpClientVoiceASR();
-		let requestInfo = new RequestInfo(url, param, METHOD_POST, false, {
+		const httpClient = new HttpClientVoiceASR();
+		const requestInfo = new RequestInfo(url, param, METHOD_POST, false, {
 			[httpHeader.CONTENT_TYPE]: CONTENT_TYPE_JSON
 		});
 		requestInfo.setHost(HOST_VOP);

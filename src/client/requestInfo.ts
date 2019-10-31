@@ -40,7 +40,7 @@ export default class RequestInfo {
 	private createDate = new Date();
 	private devAccessToken = null as unknown as DevAuthToken;
 	private headers = {} as { [key: string]: string; };
-	constructor(private path: string, private params: any, private method: 'GET' | 'POST' | 'DELETE' | 'PUT', private isHttp = false, private mergeHeaders = {} as { [key: string]: string; }) {
+	constructor(private path: string, private params = {}, private method: 'GET' | 'POST' | 'DELETE' | 'PUT', private isHttp = false, private mergeHeaders = {} as { [key: string]: string; }) {
 		this.initCommonHeader();
 	}
 	public setHost(host: string) {
