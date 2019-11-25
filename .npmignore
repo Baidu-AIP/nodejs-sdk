@@ -1,3 +1,6 @@
 test/
 src/
 tsconfig.json
+node_modules
+yarn.lock
+.travis.yml
