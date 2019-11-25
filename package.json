@@ -1,6 +1,6 @@
 {
 	"name": "@dfeidao/baidu-aip-sdk",
-	"version": "2.4.4",
+	"version": "1.0.0",
 	"description": "百度AI开放平台Nodejs SDK, 文档以及详情请访问官网: https://ai.baidu.com",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
