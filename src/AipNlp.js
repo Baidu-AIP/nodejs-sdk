@@ -39,6 +39,7 @@ const TOPIC_PATH = '/rpc/2.0/nlp/v1/topic';
 const ECNET_PATH = '/rpc/2.0/nlp/v1/ecnet';
 const EMOTION_PATH = '/rpc/2.0/nlp/v1/emotion';
 const NEWS_SUMMARY_PATH = '/rpc/2.0/nlp/v1/news_summary';
+const ADDRESS_PATH = '/rpc/2.0/nlp/v1/address';
 
 
 /**
@@ -300,6 +301,22 @@ class AipNlp extends BaseClient {
             content: content,
             max_summary_len: maxSummaryLen,
             targetPath: NEWS_SUMMARY_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 地址识别接口接口
+     *
+     * @param {string} text - 待识别的文本内容，不超过1000字节
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    address(text, options) {
+        let param = {
+            text: text,
+            targetPath: ADDRESS_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }

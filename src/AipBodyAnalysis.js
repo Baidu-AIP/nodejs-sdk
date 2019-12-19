@@ -32,6 +32,7 @@ const GESTURE_PATH = '/rest/2.0/image-classify/v1/gesture';
 const BODY_SEG_PATH = '/rest/2.0/image-classify/v1/body_seg';
 const DRIVER_BEHAVIOR_PATH = '/rest/2.0/image-classify/v1/driver_behavior';
 const BODY_TRACKING_PATH = '/rest/2.0/image-classify/v1/body_tracking';
+const HAND_ANALYSIS_PATH = '/rest/2.0/image-classify/v1/driver_behavior';
 
 
 /**
@@ -176,6 +177,22 @@ class AipBodyAnalysis extends BaseClient {
             image: image,
             dynamic: dynamic,
             targetPath: BODY_TRACKING_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 手部关键点识别接口
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    handAnalysis(image, options) {
+        let param = {
+            image: image,
+            targetPath: HAND_ANALYSIS_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
     }

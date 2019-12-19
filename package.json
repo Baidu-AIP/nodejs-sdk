@@ -1,6 +1,6 @@
 {
   "name": "baidu-aip-sdk",
-  "version": "2.4.4",
+  "version": "2.4.5",
   "description": "百度AI开放平台Nodejs SDK, 文档以及详情请访问官网: https://ai.baidu.com",
   "main": "src/index.js",
   "scripts": {
@@ -15,6 +15,7 @@
   "dependencies": {
     "debug": "^2.6.0",
     "iconv-lite": "^0.4.15",
+    "keep-alive-agent": "0.0.1",
     "request": "^2.79.0",
     "underscore": "^1.8.3"
   },
