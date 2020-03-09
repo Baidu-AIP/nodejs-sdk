@@ -33,14 +33,8 @@ const METHOD_POST = 'POST';
 const PATH_USER_DEFINED_IMAGE = '/rest/2.0/solution/v1/img_censor/v2/user_defined';
 const PATH_USER_DEFINED_TEXT = '/rest/2.0/solution/v1/text_censor/v2/user_defined';
 
-const PATH_ANTIPORN_GIF = '/rest/2.0/antiporn/v1/detect_gif';
-const PATH_FACEAUDIT = '/rest/2.0/solution/v1/face_audit';
-const PATH_COMBOCENSOR = '/api/v1/solution/direct/img_censor';
 const PATH_REPORT = '/rpc/2.0/feedback/v1/report';
 
-const PATH_ANTIPORN = '/rest/2.0/antiporn/v1/detect';
-const PATH_ANTITERROR = '/rest/2.0/antiterror/v1/detect';
-const PATH_ANTISPAM = '/rest/2.0/antispam/v2/spam';
 
 const scope = require('./const/devScope').DEFAULT;
 
@@ -80,53 +74,6 @@ class AipImageCensor extends BaseClient {
         return this.doRequest(requestInfo, httpClient);
     }
 
-    antiPornGif(image, options) {
-        let param = {
-            image: image,
-            targetPath: PATH_ANTIPORN_GIF
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    antiPorn(image, options) {
-        let param = {
-            image: image,
-            targetPath: PATH_ANTIPORN
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    antiTerror(image, options) {
-        let param = {
-            image: image,
-            targetPath: PATH_ANTITERROR
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    antiSpam(content, options) {
-        let param = {
-            content: content,
-            targetPath: PATH_ANTISPAM
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    faceAudit(images, type, configId) {
-        let param = {configId: configId};
-        if (type === 'url') {
-            images = images.map(function (elm) {
-                return encodeURIComponent(elm);
-            });
-            param.imgUrls = images.join(',');
-        }
-        if (type === 'base64') {
-            param.images = images.join(',');
-        }
-        param.targetPath = PATH_FACEAUDIT;
-        return this.commonImpl(param);
-    }
-
     imageCensorUserDefined(image, type) {
         let param = {};
         if (type === 'url') {
@@ -144,20 +91,6 @@ class AipImageCensor extends BaseClient {
         param.text = text;
         param.targetPath = PATH_USER_DEFINED_TEXT;
         return this.commonImpl(param);
-    }
-
-    imageCensorComb(image, type, scenes, scenesConf) {
-        let param = {};
-        if (type === 'url') {
-            param.imgUrl = image;
-        }
-        if (type === 'base64') {
-            param.image = image;
-        }
-        param.scenes = scenes;
-        param.sceneConf = scenesConf;
-        param.targetPath = PATH_COMBOCENSOR;
-        return this.jsonRequestImpl(param);
     }
 
     report(feedback) {
