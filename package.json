@@ -19,7 +19,7 @@
     "request": "^2.79.0",
     "underscore": "^1.8.3"
   },
-  "optionalDependencies": {
+  "devDependencies": {
     "should": "^13.2.0",
     "mocha": "^4.0.1"
   }
