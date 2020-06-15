@@ -43,6 +43,11 @@ const GROUP_DELETE_PATH = '/rest/2.0/face/v3/faceset/group/delete';
 const GROUP_GETLIST_PATH = '/rest/2.0/face/v3/faceset/group/getlist';
 const PERSON_VERIFY_PATH = '/rest/2.0/face/v3/person/verify';
 const VIDEO_SESSIONCODE_PATH = '/rest/2.0/face/v1/faceliveness/sessioncode';
+const SKIN_COLOR_PATH = '/rest/2.0/face/v1/skin_color';
+const SKIN_SMOOTH_PATH = '/rest/2.0/face/v1/skin_smooth';
+const ACNESPOTMOLE_PATH = '/rest/2.0/face/v1/acnespotmole';
+const FACE_3D_PROCESS_PATH = '/rest/2.0/face/v1/face3dprocess';
+const WRINKLE_PATH = '/rest/2.0/face/v1/wrinkle';
 
 
 /**
@@ -449,6 +454,83 @@ class AipFace extends BaseClient {
         let requestInfo = new RequestInfo(MATCH_PATH,
             object, METHOD_POST);
         return this.doRequest(requestInfo, httpClientJson);
+    }
+
+
+    /**
+     * 膚色檢測
+     *
+     * @param {string} image - 图片信息(总数据大小应小于10M)，图片上传方式根据image_type来判断。注：组内每个uid下的人脸图片数目上限为20张
+     * @param {string} imageType - 图片类型     <br> **BASE64**:图片的base64值，base64编码后的图片数据，编码后的图片大小不超过2M； <br>**URL**:图片的 URL地址( 可能由于网络等原因导致下载图片时间过长)； <br>**FACE_TOKEN**: 人脸图片的唯一标识，调用人脸检测接口时，会为每个人脸图片赋予一个唯一的FACE_TOKEN，同一张图片多次检测得到的FACE_TOKEN是同一个。
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   max_face_num 最多处理人脸的数目. 默认值为1（仅检测图片中面积最大的那个人脸） 最大值10
+     * @return {Promise} - 标准Promise对象
+     */
+    skinColor(image, imageType, options) {
+        let param = {
+            image: image,
+            image_type: imageType,
+            targetPath: SKIN_COLOR_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 皮膚光滑度檢測
+     *
+     * @param {string} image - 图片信息(总数据大小应小于10M)，图片上传方式根据image_type来判断。注：组内每个uid下的人脸图片数目上限为20张
+     * @param {string} imageType - 图片类型     <br> **BASE64**:图片的base64值，base64编码后的图片数据，编码后的图片大小不超过2M； <br>**URL**:图片的 URL地址( 可能由于网络等原因导致下载图片时间过长)； <br>**FACE_TOKEN**: 人脸图片的唯一标识，调用人脸检测接口时，会为每个人脸图片赋予一个唯一的FACE_TOKEN，同一张图片多次检测得到的FACE_TOKEN是同一个。
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   max_face_num 最多处理人脸的数目. 默认值为1（仅检测图片中面积最大的那个人脸） 最大值10
+     * @return {Promise} - 标准Promise对象
+     */
+    skinSmooth(image, imageType, options) {
+        let param = {
+            image: image,
+            image_type: imageType,
+            targetPath: SKIN_SMOOTH_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 痘斑痣檢測
+     *
+     * @param {string} image - 图片信息(总数据大小应小于10M)，图片上传方式根据image_type来判断。注：组内每个uid下的人脸图片数目上限为20张
+     * @param {string} imageType - 图片类型     <br> **BASE64**:图片的base64值，base64编码后的图片数据，编码后的图片大小不超过2M； <br>**URL**:图片的 URL地址( 可能由于网络等原因导致下载图片时间过长)； <br>**FACE_TOKEN**: 人脸图片的唯一标识，调用人脸检测接口时，会为每个人脸图片赋予一个唯一的FACE_TOKEN，同一张图片多次检测得到的FACE_TOKEN是同一个。
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   max_face_num 最多处理人脸的数目. 默认值为1（仅检测图片中面积最大的那个人脸） 最大值10
+     * @return {Promise} - 标准Promise对象
+     */
+    acnespotmole(image, imageType, options) {
+        let param = {
+            image: image,
+            image_type: imageType,
+            targetPath: ACNESPOTMOLE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 皺紋檢測
+     *
+     * @param {string} image - 图片信息(总数据大小应小于10M)，图片上传方式根据image_type来判断。注：组内每个uid下的人脸图片数目上限为20张
+     * @param {string} imageType - 图片类型     <br> **BASE64**:图片的base64值，base64编码后的图片数据，编码后的图片大小不超过2M； <br>**URL**:图片的 URL地址( 可能由于网络等原因导致下载图片时间过长)； <br>**FACE_TOKEN**: 人脸图片的唯一标识，调用人脸检测接口时，会为每个人脸图片赋予一个唯一的FACE_TOKEN，同一张图片多次检测得到的FACE_TOKEN是同一个。
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   max_face_num 最多处理人脸的数目. 默认值为1（仅检测图片中面积最大的那个人脸） 最大值10
+     * @return {Promise} - 标准Promise对象
+     */
+    wrinkle(image, imageType, options) {
+        let param = {
+            image: image,
+            image_type: imageType,
+            targetPath: WRINKLE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
     }
 }
 
