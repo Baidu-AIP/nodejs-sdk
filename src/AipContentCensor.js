@@ -94,7 +94,7 @@ class AipImageCensor extends BaseClient {
         return this.commonImpl(param);
     }
 
-    VoiceCensorUserDefined(voice, type, options) {
+    voiceCensorUserDefined(voice, type, options) {
         let param = {};
         if (type === 'url') {
             param.url = voice;
