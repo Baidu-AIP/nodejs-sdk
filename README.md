@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/Baidu-AIP/nodejs-sdk.svg?branch=master)](https://travis-ci.org/Baidu-AIP/nodejs-sdk)
 [![npm](https://img.shields.io/npm/v/baidu-aip-sdk.svg)](https://www.npmjs.com/package/baidu-aip-sdk)
+# fork 说明
+- 扩充语音审核 sdk
 
 # 安装百度AI开放平台 Node.js SDK
 
