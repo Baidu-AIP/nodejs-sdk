@@ -32,6 +32,7 @@ const METHOD_POST = 'POST';
 
 const PATH_USER_DEFINED_IMAGE = '/rest/2.0/solution/v1/img_censor/v2/user_defined';
 const PATH_USER_DEFINED_TEXT = '/rest/2.0/solution/v1/text_censor/v2/user_defined';
+const PATH_USER_DEFINED_VOICE = '/rest/2.0/solution/v1/voice_censor/v2/user_defined';
 
 const PATH_REPORT = '/rpc/2.0/feedback/v1/report';
 
@@ -90,6 +91,26 @@ class AipImageCensor extends BaseClient {
         let param = {};
         param.text = text;
         param.targetPath = PATH_USER_DEFINED_TEXT;
+        return this.commonImpl(param);
+    }
+
+    voiceCensorUserDefined(voice, type, fmt, options) {
+        let param = { fmt };
+        if (type === 'url') {
+            param.url = voice;
+        }
+        if (type === 'base64') {
+            param.base64 = voice;
+        }
+        if (options) {
+            if (options.rawText) {
+                param.rawText = options.rawText
+            }
+            if (options.split) {
+                param.split = options.split
+            }
+        }
+        param.targetPath = PATH_USER_DEFINED_VOICE;
         return this.commonImpl(param);
     }
 
