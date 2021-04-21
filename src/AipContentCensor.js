@@ -38,6 +38,8 @@ const PATH_FACEAUDIT = '/rest/2.0/solution/v1/face_audit';
 const PATH_COMBOCENSOR = '/api/v1/solution/direct/img_censor';
 const PATH_REPORT = '/rpc/2.0/feedback/v1/report';
 
+const PATH_USER_DEFINED_TEXT = '/rest/2.0/solution/v1/text_censor/v2/user_defined';
+
 const PATH_ANTIPORN = '/rest/2.0/antiporn/v1/detect';
 const PATH_ANTITERROR = '/rest/2.0/antiterror/v1/detect';
 const PATH_ANTISPAM = '/rest/2.0/antispam/v2/spam';
@@ -151,6 +153,13 @@ class AipImageCensor extends BaseClient {
         param.sceneConf = scenesConf;
         param.targetPath = PATH_COMBOCENSOR;
         return this.jsonRequestImpl(param);
+    }
+
+    textCensorUserDefined(text, type) {
+      let param = {};
+      param.text = text;
+      param.targetPath = PATH_USER_DEFINED_TEXT;
+      return this.commonImpl(param);
     }
 
     report(feedback) {
