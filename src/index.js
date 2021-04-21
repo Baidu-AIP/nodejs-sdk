@@ -17,16 +17,13 @@
 
 
 module.exports = {
-    bodyanalysis: require('./AipBodyAnalysis'),
     imageSearch: require('./AipImageSearch'),
     imageClassify: require('./AipImageClassify'),
-    imageProcess: require('./AipImageProcess'),
     contentCensor: require('./AipContentCensor'),
-    face: require('./AipFace'),
-    ocr: require('./AipOcr'),
-    nlp: require('./AipNlp'),
-    kg: require('./AipKg'),
-    speech: require('./AipSpeech'),
-    easydl: require('./AipEasyDL'),
-    HttpClient: require('./http/httpClient')
+    // face: require('./AipFace'),
+    // ocr: require('./AipOcr'),
+    // nlp: require('./AipNlp'),
+    // kg: require('./AipKg'),
+    // speech: require('./AipSpeech'),
+    // HttpClient: require('./http/httpClient')
 };
