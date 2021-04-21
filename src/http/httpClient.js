@@ -106,6 +106,6 @@ HttpClient.REQUEST_GLOBAL_OPTIONS = null;
 
 HttpClient.REQUEST_INTERCEPTOR = null;
 
-HttpClient.DEFAULT_TIMEOUT = 10000;
+HttpClient.DEFAULT_TIMEOUT = 60000;
 
 module.exports = HttpClient;
