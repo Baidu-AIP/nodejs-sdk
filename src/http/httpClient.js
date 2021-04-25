@@ -40,7 +40,22 @@ class HttpClient {
 
         return this.req(options);
     }
+
+    postWithInfoForJson(requestInfo) {
+        let options = {
+            method: requestInfo.method,
+            url: requestInfo.getUrl(),
+            json: true,
+            headers: requestInfo.headers,
+            body: JSON.stringify(requestInfo.params),
+            timeout: HttpClient.DEFAULT_TIMEOUT
+        };
+
+        return this.req(options);
+    }
+
     req(options) {
+
         // 首先处理设置INTERCEPTOR的情况
         if (objectTools.isFunction(HttpClient.REQUEST_INTERCEPTOR)) {
             options = HttpClient.REQUEST_INTERCEPTOR(options);
@@ -91,6 +106,6 @@ HttpClient.REQUEST_GLOBAL_OPTIONS = null;
 
 HttpClient.REQUEST_INTERCEPTOR = null;
 
-HttpClient.DEFAULT_TIMEOUT = 10000;
+HttpClient.DEFAULT_TIMEOUT = 60000;
 
 module.exports = HttpClient;

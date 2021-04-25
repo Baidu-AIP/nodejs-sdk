@@ -21,6 +21,7 @@ const CloudAuth = require('../auth/cloudAuth');
 const HOST_DEFAULT = 'aip.baidubce.com';
 
 const CONTENT_TYPE_FORMDEFAULT = 'application/x-www-form-urlencoded';
+const CONTENT_TYPE_JSON = 'application/json;charset=utf-8';
 
 const SYMBOL_QUERYSTRING_PREFIX = '?aipSdk=node&access_token=';
 const SYMBOL_QUERYSTRING_PREFIX_BCE = '?aipSdk=node';
