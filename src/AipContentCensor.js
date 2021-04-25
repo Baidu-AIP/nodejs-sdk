@@ -30,7 +30,7 @@ const CONTENT_TYPE_JSON = 'application/json';
 
 const METHOD_POST = 'POST';
 
-const PATH_USER_DEFINED = '/rest/2.0/solution/v1/img_censor/user_defined';
+const PATH_USER_DEFINED = '/rest/2.0/solution/v1/img_censor/v2/user_defined';
 const PATH_VOICE_USER_DEFINED = '/rest/2.0/solution/v1/voice_censor/v2/user_defined';
 const PATH_VIDEO_USER_DEFINED = '/rest/2.0/solution/v1/video_censor/v2/user_defined';
 const PATH_ANTIPORN_GIF = '/rest/2.0/antiporn/v1/detect_gif';
