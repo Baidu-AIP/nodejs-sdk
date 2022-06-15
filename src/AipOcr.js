@@ -38,22 +38,9 @@ const VEHICLE_LICENSE_PATH = '/rest/2.0/ocr/v1/vehicle_license';
 const LICENSE_PLATE_PATH = '/rest/2.0/ocr/v1/license_plate';
 const BUSINESS_LICENSE_PATH = '/rest/2.0/ocr/v1/business_license';
 const RECEIPT_PATH = '/rest/2.0/ocr/v1/receipt';
-const TRAIN_TICKET_PATH = '/rest/2.0/ocr/v1/train_ticket';
-const TAXI_RECEIPT_PATH = '/rest/2.0/ocr/v1/taxi_receipt';
 const FORM_PATH = '/rest/2.0/ocr/v1/form';
 const TABLE_RECOGNIZE_PATH = '/rest/2.0/solution/v1/form_ocr/request';
 const TABLE_RESULT_GET_PATH = '/rest/2.0/solution/v1/form_ocr/get_request_result';
-const VIN_CODE_PATH = '/rest/2.0/ocr/v1/vin_code';
-const QUOTA_INVOICE_PATH = '/rest/2.0/ocr/v1/quota_invoice';
-const HOUSEHOLD_REGISTER_PATH = '/rest/2.0/ocr/v1/household_register';
-const HK_MACAU_EXITENTRYPERMIT_PATH = '/rest/2.0/ocr/v1/HK_Macau_exitentrypermit';
-const TAIWAN_EXITENTRYPERMIT_PATH = '/rest/2.0/ocr/v1/taiwan_exitentrypermit';
-const BIRTH_CERTIFICATE_PATH = '/rest/2.0/ocr/v1/birth_certificate';
-const VEHICLE_INVOICE_PATH = '/rest/2.0/ocr/v1/vehicle_invoice';
-const VEHICLE_CERTIFICATE_PATH = '/rest/2.0/ocr/v1/vehicle_certificate';
-const INVOICE_PATH = '/rest/2.0/ocr/v1/invoice';
-const AIR_TICKET_PATH = '/rest/2.0/ocr/v1/air_ticket';
-const INSURANCE_DOCUMENTS_PATH = '/rest/2.0/ocr/v1/insurance_documents';
 const VAT_INVOICE_PATH = '/rest/2.0/ocr/v1/vat_invoice';
 const QRCODE_PATH = '/rest/2.0/ocr/v1/qrcode';
 const NUMBERS_PATH = '/rest/2.0/ocr/v1/numbers';
@@ -63,13 +50,29 @@ const BUSINESS_CARD_PATH = '/rest/2.0/ocr/v1/business_card';
 const HANDWRITING_PATH = '/rest/2.0/ocr/v1/handwriting';
 const CUSTOM_PATH = '/rest/2.0/solution/v1/iocr/recognise';
 
+const DOCANALYSIS_PATH = '/rest/2.0/ocr/v1/doc_analysis';
+const METER_PATH  = '/rest/2.0/ocr/v1/meter';
+const WEBIMAGELOC_PATH  = '/rest/2.0/ocr/v1/webimage_loc';
+
+const TAXI_RECEIPT_PATH  = '/rest/2.0/ocr/v1/taxi_receipt';
+const VIN_CODE_PATH  = '/rest/2.0/ocr/v1/vin_code';
+const TRAIN_TICKET_PATH  = '/rest/2.0/ocr/v1/train_ticket';
+const VEHICLE_INVOICE_PATH = '/rest/2.0/ocr/v1/vehicle_invoice';
+const VEHICLE_CERTIFICATE_PATH = '/rest/2.0/ocr/v1/vehicle_certificate';
+const HOUSEHOLD_REGISTER_PATH = '/rest/2.0/ocr/v1/household_register';
+const AIR_TICKET_PATH = '/rest/2.0/ocr/v1/air_ticket';
+const INVOICE_PATH = '/rest/2.0/ocr/v1/invoice';
+const ONLINE_TAXI_ITINERARY_PATH = '/rest/2.0/ocr/v1/online_taxi_itinerary';
+const WEIGHT_NOTE_PATH = '/rest/2.0/ocr/v1/weight_note';
+const MEDICAL_DETAIL_PATH = '/rest/2.0/ocr/v1/medical_detail';
+
 
 /**
  * AipOcr类
  *
  * @class
  * @extends BaseClient
- * @constructor
+ * @constructor`
  * @param {string} appid appid.
  * @param {string} ak  access key.
  * @param {string} sk  security key.
@@ -82,8 +85,7 @@ class AipOcr extends BaseClient {
         let httpClient = new HttpClient();
         let apiUrl = param.targetPath;
         delete param.targetPath;
-        let requestInfo = new RequestInfo(apiUrl,
-            param, METHOD_POST);
+        let requestInfo = new RequestInfo(apiUrl, param, METHOD_POST);
         return this.doRequest(requestInfo, httpClient);
     }
 
@@ -410,38 +412,6 @@ class AipOcr extends BaseClient {
     }
 
     /**
-     * 火车票识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    trainTicket(image, options) {
-        let param = {
-            image: image,
-            targetPath: TRAIN_TICKET_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 出租车票识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    taxiReceipt(image, options) {
-        let param = {
-            image: image,
-            targetPath: TAXI_RECEIPT_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
      * 表格文字识别同步接口接口
      *
      * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
@@ -491,185 +461,6 @@ class AipOcr extends BaseClient {
     }
 
     /**
-     * VIN码识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    vinCode(image, options) {
-        let param = {
-            image: image,
-            targetPath: VIN_CODE_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 定额发票识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    quotaInvoice(image, options) {
-        let param = {
-            image: image,
-            targetPath: QUOTA_INVOICE_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 户口本识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    householdRegister(image, options) {
-        let param = {
-            image: image,
-            targetPath: HOUSEHOLD_REGISTER_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 港澳通行证识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    HKMacauExitentrypermit(image, options) {
-        let param = {
-            image: image,
-            targetPath: HK_MACAU_EXITENTRYPERMIT_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 台湾通行证识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    taiwanExitentrypermit(image, options) {
-        let param = {
-            image: image,
-            targetPath: TAIWAN_EXITENTRYPERMIT_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 出生医学证明识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    birthCertificate(image, options) {
-        let param = {
-            image: image,
-            targetPath: BIRTH_CERTIFICATE_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 机动车销售发票识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    vehicleInvoice(image, options) {
-        let param = {
-            image: image,
-            targetPath: VEHICLE_INVOICE_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 车辆合格证识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     * @return {Promise} - 标准Promise对象
-     */
-    vehicleCertificate(image, options) {
-        let param = {
-            image: image,
-            targetPath: VEHICLE_CERTIFICATE_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 税务局通用机打发票识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     *   location 是否输出位置信息，true：输出位置信息，false：不输出位置信息，默认false
-     * @return {Promise} - 标准Promise对象
-     */
-    invoice(image, options) {
-        let param = {
-            image: image,
-            targetPath: INVOICE_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 行程单识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     *   location 是否输出位置信息，true：输出位置信息，false：不输出位置信息，默认false
-     * @return {Promise} - 标准Promise对象
-     */
-    airTicket(image, options) {
-        let param = {
-            image: image,
-            targetPath: AIR_TICKET_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
-     * 保单识别接口
-     *
-     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
-     * @param {Object} options - 可选参数对象，key: value都为string类型
-     * @description options - options列表:
-     *   rkv_business 是否进行商业逻辑处理，rue：进行商业逻辑处理，false：不进行商业逻辑处理，默认true
-     * @return {Promise} - 标准Promise对象
-     */
-    insuranceDocuments(image, options) {
-        let param = {
-            image: image,
-            targetPath: INSURANCE_DOCUMENTS_PATH
-        };
-        return this.commonImpl(objectTools.merge(param, options));
-    }
-
-    /**
      * 增值税发票识别接口
      *
      * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
@@ -680,6 +471,41 @@ class AipOcr extends BaseClient {
     vatInvoice(image, options) {
         let param = {
             image: image,
+            targetPath: VAT_INVOICE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 增值税发票识别接口
+     *
+     * @param {string} image - url
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    vatInvoiceUrl(image, options) {
+        let param = {
+            url: image,
+            targetPath: VAT_INVOICE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 增值税发票识别接口
+     *
+     * @param {string} image - pdf
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    vatInvoicePdf(image, options) {
+        let fs = require('fs');
+        let data = fs.readFileSync(image);
+        let base64 = new Buffer(data).toString('base64');
+        let param = {
+            pdf_file: base64,
             targetPath: VAT_INVOICE_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
@@ -789,15 +615,15 @@ class AipOcr extends BaseClient {
      * 自定义模板文字识别接口
      *
      * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param {string} templateSign - 您在自定义文字识别平台制作的模板的ID
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
-     *   templateSign 您在自定义文字识别平台制作的模板的ID
-     *   classifierId 分类器Id。这个参数和templateSign至少存在一个，优先使用templateSign。存在templateSign时，表示使用指定模板；如果没有templateSign而有classifierId，表示使用分类器去判断使用哪个模板
      * @return {Promise} - 标准Promise对象
      */
-    custom(image, options) {
+    custom(image, templateSign, options) {
         let param = {
             image: image,
+            templateSign: templateSign,
             targetPath: CUSTOM_PATH
         };
         return this.commonImpl(objectTools.merge(param, options));
@@ -830,8 +656,587 @@ class AipOcr extends BaseClient {
             })
         });
     }
+
+    /**
+     * 文档版面分析与识别
+     *
+     * @param {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param languageType
+         识别语言类型，默认为CHN_ENG  可选值包括：CHN_ENG：中英文, ENG：英文
+     * @param resultType
+         返回识别结果是按单行结果返回，还是按单字结果返回，默认为big。
+         big：返回行识别结果
+         small：返回行识别结果之上还会返回单字结果
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *      detect_direction：
+     *                  类型: string   可选值范围: true/false  说明：是否检测图像朝向，默认不检测，即：false。
+     *      line_probability:
+     *                  类型: string   可选值范围: true/false  说明：是否返回每行识别结果的置信度。默认为false
+     *      words_type:
+     *                  类型: string   可选值范围: handwring_only/handprint_mix  说明：文字类型, 默认 印刷文字识别
+     *      layout_analysis：
+     *                  类型: string   可选值范围: true/false  说明：是否分析文档版面：包括图、表、标题、段落的分析输出
+     * @return {Promise} - 标准Promise对象
+     */
+    docAnalysis(image,languageType, resultType, options) {
+        let param = {
+            image: image,
+            language_type:languageType,
+            result_type:resultType,
+            targetPath: DOCANALYSIS_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+
+    /**
+     * 仪器仪表盘读数识别
+     {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param options - options列表
+     *      probability：
+     *                  类型: string   可选值范围: true/false  说明：是否返回每行识别结果的置信度。默认为false
+     *      poly_location:
+     *                  类型: string   可选值范围: true/false  说明：位置信息返回形式，默认：false
+     * @return
+     */
+    meter(image, options) {
+        let param = {
+            image: image,
+            targetPath: METER_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+
+    /**
+     * 网络图片文字识别（含位置版）
+     * {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param options - options列表
+     *      detect_direction：
+     *                  类型: string   可选值范围: true/false  说明：是否检测图像朝向，默认不检测，即：false。
+     *      probability:
+     *                  类型: string   可选值范围: true/false  说明：是否返回每行识别结果的置信度。默认为false
+     *      poly_location:
+     *                  类型: string   可选值范围: handwring_only/handprint_mix  说明：是否返回文字所在区域的外接四边形的4个点坐标信息。默认为false
+     *      recognize_granularity：
+     *                  类型: string   可选值范围: true/false  说明：是否定位单字符位置，big：不定位单字符位置，默认值；small：定位单字符位置
+     * @return
+     */
+     webimageLoc(image, options) {
+        let param = {
+            image: image,
+            targetPath: WEBIMAGELOC_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 出租车票识别
+     * {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param options - options列表
+     * @return
+     */
+    taxiReceipt(image, options) {
+        let param = {
+            image: image,
+            targetPath: TAXI_RECEIPT_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+
+    /**
+     * 出租车票识别
+     * {string} image - url
+     * @param options - options列表
+     * @return
+     */
+    taxiReceiptUrl(image, options) {
+        let param = {
+            url: image,
+            targetPath: TAXI_RECEIPT_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * VIN码识别
+     * {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param options - options列表
+     * @return
+     */
+    vinCode(image, options) {
+        let param = {
+            image: image,
+            targetPath: VIN_CODE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * VIN码识别
+     * {string} image - url
+     * @param options - options列表
+     * @return
+     */
+    vinCodeUrl(image, options) {
+        let param = {
+            url: image,
+            targetPath: VIN_CODE_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 火车票识别
+     * {string} image - 图像数据，base64编码，要求base64编码后大小不超过4M，最短边至少15px，最长边最大4096px,支持jpg/png/bmp格式
+     * @param options - options列表
+     * @return
+     */
+    trainTicket(image, options) {
+        let param = {
+            image: image,
+            targetPath: TRAIN_TICKET_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 火车票识别
+     * {string} image - url
+     * @param options - options列表
+     * @return
+     */
+    trainTicketUrl(image, options) {
+        let param = {
+            url: image,
+            targetPath: TRAIN_TICKET_PATH
+        };
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+    /**
+     * 二维码识别
+     *
+     * @param {string} url - 图片完整URL
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    qrcodeUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = QRCODE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 试卷分析与识别
+     *
+     * @param {string} url - 图片完整URL
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   multi_detect 控制是否开启多航班信息识别功能,默认值：false
+     * @return {Promise} - 标准Promise对象
+     */
+    docAnalysisUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = DOCANALYSIS_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 机动车销售发票
+     *
+     * @param {string} image - 二进制图像数据
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    vehicleInvoice(image, options) {
+
+        let param = {};
+
+        param.image = image;
+        param.targetPath = VEHICLE_INVOICE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 机动车销售发票
+     *
+     * @param {string} url - 图片完整URL
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    vehicleInvoiceUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = VEHICLE_INVOICE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 车辆合格证
+     *
+     * @param {string} image - 二进制图像数据
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   language_type 识别语言类型，默认为CHN_ENG
+     *   result_type 返回识别结果是按单行结果返回，还是按单字结果返回，默认为big
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false
+     *   line_probability 是否返回每行识别结果的置信度。默认为false
+     *   words_type 文字类型。
+     * @return {Promise} - 标准Promise对象
+     */
+    vehicleCertificate(image, options) {
+
+        let param = {};
+
+        param.image = image;
+        param.targetPath = VEHICLE_CERTIFICATE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 车辆合格证
+     *
+     * @param {string} url - 图片完整URL
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   language_type 识别语言类型，默认为CHN_ENG
+     *   result_type 返回识别结果是按单行结果返回，还是按单字结果返回，默认为big
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false
+     *   line_probability 是否返回每行识别结果的置信度。默认为false
+     *   words_type 文字类型。
+     * @return {Promise} - 标准Promise对象
+     */
+    vehicleCertificateUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = VEHICLE_CERTIFICATE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 户口本识别
+     *
+     * @param {string} image - 二进制图像数据
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    householdRegister(image, options) {
+
+        let param = {};
+
+        param.image = image;
+        param.targetPath = HOUSEHOLD_REGISTER_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 户口本识别
+     *
+     * @param {string} url - 图片完整URL
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    householdRegisterUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = HOUSEHOLD_REGISTER_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 手写文字识别
+     *
+     * @param {string} url - 图片完整URL
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   recognize_granularity 是否定位单字符位置，
+     *   probability 是否返回识别结果中每一行的置信度，默认为false，不返回置信度
+     *   detect_direction 是否检测图像朝向，默认不检测，即：false
+     * @return {Promise} - 标准Promise对象
+     */
+    handwritingUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = HANDWRITING_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 飞机行程单识别
+     *
+     * @param {string} image - 二进制图像数据
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   multi_detect 控制是否开启多航班信息识别功能,默认值：false
+     * @return {Promise} - 标准Promise对象
+     */
+    airTicket(image, options) {
+
+        let param = {};
+
+        param.image = image;
+        param.targetPath = AIR_TICKET_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 飞机行程单识别
+     *
+     * @param {string} url - 图片完整URL
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   multi_detect 控制是否开启多航班信息识别功能,默认值：false
+     * @return {Promise} - 标准Promise对象
+     */
+    airTicketUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = AIR_TICKET_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 通用机打发票
+     *
+     * @param {string} image - 二进制图像数据
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   location 是否输出位置信息，true：输出位置信息，false：不输出位置信息，默认false
+     * @return {Promise} - 标准Promise对象
+     */
+    invoice(image, options) {
+
+        let param = {};
+
+        param.image = image;
+        param.targetPath = INVOICE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 通用机打发票
+     *
+     * @param {string} url - 图片完整URL
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   location 是否输出位置信息，true：输出位置信息，false：不输出位置信息，默认false
+     * @return {Promise} - 标准Promise对象
+     */
+    invoiceUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = INVOICE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 护照识别
+     *
+     * @param {string} url - 图片完整URL
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     * @return {Promise} - 标准Promise对象
+     */
+    passportUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = PASSPORT_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 网约车行程单识别
+     *
+     * @param {string} image - 二进制图像数据
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   pdf_file_num 需要识别的PDF文件的对应页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页
+     * @return {Promise} - 标准Promise对象
+     */
+    onlineTaxiItinerary(image) {
+
+        let param = {};
+        let options = {};
+        param.image = image;
+        param.targetPath = ONLINE_TAXI_ITINERARY_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 网约车行程单识别
+     *
+     * @param {string} url - 图片完整URL路径
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   pdf_file_num 需要识别的PDF文件的对应页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页
+     * @return {Promise} - 标准Promise对象
+     */
+    onlineTaxiItineraryUrl(url) {
+
+        let param = {};
+        let options = {};
+        param.url = url;
+        param.targetPath = ONLINE_TAXI_ITINERARY_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 网约车行程单识别
+     *
+     * @param {string} pdf_file - pdf文件二进制数据
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   pdf_file_num 需要识别的PDF文件的对应页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页
+     * @return {Promise} - 标准Promise对象
+     */
+    onlineTaxiItineraryPdf(pdf_file, options) {
+
+        let param = {};
+
+        param.pdf_file = pdf_file;
+        param.targetPath = ONLINE_TAXI_ITINERARY_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 磅单识别
+     *
+     * @param {string} image - 二进制图像数据
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   pdf_file_num 需要识别的PDF文件的对应页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页
+     *   probability 是否返回字段识别结果的置信度，默认为 false，可缺省
+                - false：不返回字段识别结果的置信度
+                - true：返回字段识别结果的置信度，包括字段识别结果中各字符置信度的平均值（average）和最小值（min）
+     * @return {Promise} - 标准Promise对象
+     */
+    weightNote(image, options) {
+
+        let param = {};
+
+        param.image = image;
+        param.targetPath = WEIGHT_NOTE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 磅单识别
+     *
+     * @param {string} url - 图片完整URL路径
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   pdf_file_num 需要识别的PDF文件的对应页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页
+     *   probability 是否返回字段识别结果的置信度，默认为 false，可缺省
+                - false：不返回字段识别结果的置信度
+                - true：返回字段识别结果的置信度，包括字段识别结果中各字符置信度的平均值（average）和最小值（min）
+     * @return {Promise} - 标准Promise对象
+     */
+    weightNoteUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = WEIGHT_NOTE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 磅单识别
+     *
+     * @param {string} pdf_file - 图片完整URL路径
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   pdf_file_num 需要识别的PDF文件的对应页码，当 pdf_file 参数有效时，识别传入页码的对应页面内容，若不传入，则默认识别第 1 页
+     *   probability 是否返回字段识别结果的置信度，默认为 false，可缺省
+                - false：不返回字段识别结果的置信度
+                - true：返回字段识别结果的置信度，包括字段识别结果中各字符置信度的平均值（average）和最小值（min）
+     * @return {Promise} - 标准Promise对象
+     */
+    weightNotePdf(pdf_file, options) {
+
+        let param = {};
+
+        param.pdf_file = pdf_file;
+        param.targetPath = WEIGHT_NOTE_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 医疗费用明细识别
+     *
+     * @param {string} image - 二进制图像数据
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   location 是否返回字段的位置信息，默认为 false，可缺省
+                - false：不返回字段位置信息
+                - true：返回字段的位置信息，包括上边距（top）、左边距（left）、宽度（width）、高度（height）
+     *   probability 是否返回字段识别结果的置信度，默认为 false，可缺省
+                - false：不返回字段识别结果的置信度
+                - true：返回字段识别结果的置信度，包括字段识别结果中各字符置信度的平均值（average）和最小值（min）
+     * @return {Promise} - 标准Promise对象
+     */
+    medicalDetail(image, options) {
+
+        let param = {};
+
+        param.image = image;
+        param.targetPath = MEDICAL_DETAIL_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
+    /**
+     * 医疗费用明细识别
+     *
+     * @param {string} url - 图片完整URL路径
+     * @param {Object} options - 可选参数对象，key: value都为string类型
+     * @description options - options列表:
+     *   location 是否返回字段的位置信息，默认为 false，可缺省
+                - false：不返回字段位置信息
+                - true：返回字段的位置信息，包括上边距（top）、左边距（left）、宽度（width）、高度（height）
+     *   probability 是否返回字段识别结果的置信度，默认为 false，可缺省
+                - false：不返回字段识别结果的置信度
+                - true：返回字段识别结果的置信度，包括字段识别结果中各字符置信度的平均值（average）和最小值（min）
+     * @return {Promise} - 标准Promise对象
+     */
+    medicalDetailUrl(url, options) {
+
+        let param = {};
+
+        param.url = url;
+        param.targetPath = MEDICAL_DETAIL_PATH;
+        return this.commonImpl(objectTools.merge(param, options));
+    }
+
 }
 
 module.exports = AipOcr;
+
 
 
