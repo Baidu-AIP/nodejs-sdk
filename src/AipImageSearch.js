@@ -730,9 +730,7 @@ class AipImageSearch extends BaseClient {
     /**
      * 绘本图片搜索—删除-url
      *
-     const PICTURE_BOOK_DELETE_PATH = "/rest/2.0/imagesearch/v1/realtime_search/picturebook/delete";
-const PICTURE_BOOK_UPDATE_PATH = "/rest/2.0/imagesearch/v1/realtime_search/picturebook/update";
-* @param {string} url - 图片地址
+     * @param {string} url - 图片地址
      * @param {Object} options - 可选参数对象，key: value都为string类型
      * @description options - options列表:
      * @return {Promise} - 标准Promise对象
